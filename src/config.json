@@ -1,11 +1,12 @@
 {
-	"images": [
-
-	],
-	"fonts": [
-
-	],
-	"sounds": [
-		
-	]
+    "images": [
+        {
+            "name": "tiles",
+            "path": "./assets/images/SpriteSheet.png",
+            "width": 339,
+            "height": 339
+        }
+    ],
+    "fonts": [],
+    "sounds": []
 }
