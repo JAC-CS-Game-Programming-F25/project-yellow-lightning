@@ -131,6 +131,18 @@ export default class Map {
     }
 
     /**
+     * Checks if tile is a door (win condition).
+     * @param {number} row - The row to check.
+     * @param {number} col - The column to check.
+     * @returns {boolean} True if tile is a door, false otherwise.
+     */
+    isDoorTile(row, col) {
+        const tile = this.foregroundLayer.getTile(col, row);
+        if (!tile) return false;
+        return tile.id === Tile.DOOR;
+    }
+
+    /**
      * Gets a block at the specified coordinates.
      * @param {number} x - The x-coordinate.
      * @param {number} y - The y-coordinate.
