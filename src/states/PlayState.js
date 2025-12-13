@@ -75,5 +75,17 @@ export default class PlayState extends State {
             context.fillText("You Win!", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
             context.restore();
         }
+
+        // Display lose message if player has died
+        if (this.player.hasDied) {
+            context.save();
+            context.fillStyle = "rgba(0, 0, 0, 0.3)";
+            context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            context.fillStyle = "#FF4444";
+            context.font = "24px Arial";
+            context.textAlign = "center";
+            context.fillText("You Lose!", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
+            context.restore();
+        }
     }
 }
