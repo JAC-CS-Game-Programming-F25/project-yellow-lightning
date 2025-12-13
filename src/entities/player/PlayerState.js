@@ -1,7 +1,5 @@
-import Input from "../../../lib/Input.js";
 import State from "../../../lib/State.js";
 import { PlayerConfig } from "../../../config/PlayerConfig.js";
-import { input } from "../../globals.js";
 import Tile from "../../services/Tile.js";
 import CollisionDetector from "../../services/CollisionDetector.js";
 import Player from "./Player.js";
@@ -25,12 +23,6 @@ export default class PlayerState extends State {
      * @param {number} dt - Delta time.
      */
     update(dt) {
-        console.log(
-            "PlayerState update called, dt:",
-            dt,
-            "isOnGround:",
-            this.player.isOnGround
-        );
         this.applyGravity(dt);
         this.updatePosition(dt);
     }
@@ -44,6 +36,12 @@ export default class PlayerState extends State {
     render(context) {
         // Call the parent class's render method
         super.render();
+
+        console.log(
+            "Rendering player at:",
+            this.player.position.x,
+            this.player.position.y
+        );
 
         // Save the current canvas state
         context.save();
@@ -59,59 +57,6 @@ export default class PlayerState extends State {
 
         // Restore the canvas state to what it was before our changes
         context.restore();
-    }
-
-    /**
-     * Handles horizontal movement of the player.
-     * This method updates the player's horizontal velocity based on input
-     * and applies acceleration, deceleration, and speed limits.
-     */
-    handleHorizontalMovement() {
-        const aHeld = input.isKeyHeld(Input.KEYS.A);
-        const dHeld = input.isKeyHeld(Input.KEYS.D);
-
-        if (aHeld && dHeld) {
-            this.slowDown();
-        } else if (aHeld) {
-            this.moveLeft();
-            this.player.facingRight = false;
-        } else if (dHeld) {
-            this.moveRight();
-            this.player.facingRight = true;
-        } else {
-            this.slowDown();
-        }
-
-        // Set speed to zero if it's close to zero to stop the player
-        if (Math.abs(this.player.velocity.x) < 0.1) this.player.velocity.x = 0;
-    }
-
-    moveRight() {
-        this.player.velocity.x = Math.min(
-            this.player.velocity.x + PlayerConfig.acceleration,
-            PlayerConfig.maxSpeed
-        );
-    }
-
-    moveLeft() {
-        this.player.velocity.x = Math.max(
-            this.player.velocity.x - PlayerConfig.acceleration,
-            -PlayerConfig.maxSpeed
-        );
-    }
-
-    slowDown() {
-        if (this.player.velocity.x > 0) {
-            this.player.velocity.x = Math.max(
-                0,
-                this.player.velocity.x - PlayerConfig.deceleration
-            );
-        } else if (this.player.velocity.x < 0) {
-            this.player.velocity.x = Math.min(
-                0,
-                this.player.velocity.x + PlayerConfig.deceleration
-            );
-        }
     }
 
     /**

@@ -19,15 +19,15 @@ export default class PlayState extends State {
         this.map = new Map(mapDefinition, images.get("tiles"));
 
         // Create player at starting position
-        this.player = new Player(
-            2 * 16, 
-            17 * 16, 
-            16, 
-            16, 
-            this.map
+        this.player = new Player(2 * 16, 15 * 16, 16, 16, this.map);
+
+        console.log(
+            "Player created at:",
+            this.player.position.x,
+            this.player.position.y
         );
 
-        // Start player in falling state (will transition to idling when hitting ground)
+        // Start player in falling state
         this.player.stateMachine.change(PlayerStateName.Falling);
     }
 

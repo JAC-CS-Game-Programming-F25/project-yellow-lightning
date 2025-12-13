@@ -3,14 +3,13 @@ import Map from "../../services/Map.js";
 import Entity from "../Entity.js";
 import StateMachine from "../../../lib/StateMachine.js";
 import PlayerStateName from "../../enums/PlayerStateName.js";
-import PlayerWalkingState from "./PlayerWalkingState.js";
+import PlayerRunningState from "./PlayerRunningState.js";
 import PlayerJumpingState from "./PlayerJumpingState.js";
-import PlayerSkiddingState from "./PlayerSkiddingState.js";
 import PlayerFallingState from "./PlayerFallingState.js";
-import PlayerIdlingState from "./PlayerIdlingState.js";
 
 /**
  * Represents the player character in the game.
+ * Player constantly runs forward and can jump with W key.
  * @extends Entity
  */
 export default class Player extends Entity {
@@ -30,31 +29,22 @@ export default class Player extends Entity {
         this.dimensions = new Vector(width, height);
         this.velocity = new Vector(0, 0);
         this.map = map;
-        this.facingRight = true;
 
         // Initialize state machine for player behavior
         this.stateMachine = new StateMachine();
 
         // Add states to the state machine
         this.stateMachine.add(
-            PlayerStateName.Walking,
-            new PlayerWalkingState(this)
+            PlayerStateName.Running,
+            new PlayerRunningState(this)
         );
         this.stateMachine.add(
             PlayerStateName.Jumping,
             new PlayerJumpingState(this)
         );
         this.stateMachine.add(
-            PlayerStateName.Skidding,
-            new PlayerSkiddingState(this)
-        );
-        this.stateMachine.add(
             PlayerStateName.Falling,
             new PlayerFallingState(this)
-        );
-        this.stateMachine.add(
-            PlayerStateName.Idling,
-            new PlayerIdlingState(this)
         );
     }
 

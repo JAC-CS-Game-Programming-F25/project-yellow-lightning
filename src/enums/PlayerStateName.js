@@ -1,9 +1,7 @@
 const PlayerStateName = {
-    Idling: "Idling",
-    Walking: "Walking",
+    Running: "Running",
     Jumping: "Jumping",
     Falling: "Falling",
-    Skidding: "Skidding",
 };
 
 export default PlayerStateName;

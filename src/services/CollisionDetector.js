@@ -74,11 +74,11 @@ export default class CollisionDetector {
         if (entity.velocity.y >= 0) {
             // Falling or on ground
             if (this.isSolidTileInRow(tileBottom, tileLeft, tileRight)) {
-                // Collision below
                 console.log(
                     "GROUND COLLISION DETECTED at tileBottom:",
                     tileBottom
                 );
+                // Collision below
                 entity.position.y = tileBottom * tileSize - entity.dimensions.y;
                 entity.velocity.y = 0;
                 entity.isOnGround = true;

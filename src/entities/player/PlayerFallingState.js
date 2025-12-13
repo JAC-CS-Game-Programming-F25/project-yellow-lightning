@@ -1,9 +1,11 @@
 import PlayerState from "./PlayerState.js";
+import { PlayerConfig } from "../../../config/PlayerConfig.js";
 import PlayerStateName from "../../enums/PlayerStateName.js";
 import Player from "./Player.js";
 
 /**
  * Represents the falling state of the player.
+ * Player moves downward due to gravity until landing on ground.
  * @extends PlayerState
  */
 export default class PlayerFallingState extends PlayerState {
@@ -18,9 +20,7 @@ export default class PlayerFallingState extends PlayerState {
     /**
      * Called when entering the falling state.
      */
-    enter() {
-        //this.player.currentAnimation = this.player.animations.fall;
-    }
+    enter() {}
 
     /**
      * Updates the falling state.
@@ -28,21 +28,25 @@ export default class PlayerFallingState extends PlayerState {
      */
     update(dt) {
         super.update(dt);
-
-        this.handleHorizontalMovement();
+        this.maintainRunSpeed();
         this.checkTransitions();
     }
 
     /**
+     * Maintains constant forward running speed.
+     * Player always moves right at a constant speed.
+     */
+    maintainRunSpeed() {
+        this.player.velocity.x = PlayerConfig.runSpeed;
+    }
+
+    /**
      * Checks for state transitions.
+     * When player lands on ground, switch to running.
      */
     checkTransitions() {
         if (this.player.isOnGround) {
-            if (Math.abs(this.player.velocity.x) < 0.1) {
-                this.player.stateMachine.change(PlayerStateName.Idling);
-            } else {
-                this.player.stateMachine.change(PlayerStateName.Walking);
-            }
+            this.player.stateMachine.change(PlayerStateName.Running);
         }
     }
 }

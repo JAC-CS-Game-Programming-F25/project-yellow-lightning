@@ -1,12 +1,11 @@
 import PlayerState from "./PlayerState.js";
-import { input, sounds } from "../../globals.js";
 import { PlayerConfig } from "../../../config/PlayerConfig.js";
-import Input from "../../../lib/Input.js";
 import PlayerStateName from "../../enums/PlayerStateName.js";
 import Player from "./Player.js";
 
 /**
  * Represents the jumping state of the player.
+ * Player moves upward with initial jump velocity, then transitions to falling.
  * @extends PlayerState
  */
 export default class PlayerJumpingState extends PlayerState {
@@ -23,8 +22,6 @@ export default class PlayerJumpingState extends PlayerState {
      */
     enter() {
         this.player.velocity.y = PlayerConfig.jumpPower;
-        //this.player.currentAnimation = this.player.animations.jump;
-        //sounds.play(SoundName.Jump);
     }
 
     /**
@@ -38,23 +35,21 @@ export default class PlayerJumpingState extends PlayerState {
      */
     update(dt) {
         super.update(dt);
-
-        this.handleInput();
-        this.handleHorizontalMovement();
+        this.maintainRunSpeed();
         this.checkTransitions();
     }
 
     /**
-     * Handles player input.
+     * Maintains constant forward running speed.
+     * Player always moves right at a constant speed.
      */
-    handleInput() {
-        if (!input.isKeyHeld(Input.KEYS.SPACE) && this.player.velocity.y < 0) {
-            this.player.velocity.y *= 0.5;
-        }
+    maintainRunSpeed() {
+        this.player.velocity.x = PlayerConfig.runSpeed;
     }
 
     /**
      * Checks for state transitions.
+     * When velocity becomes positive (moving downward), switch to falling.
      */
     checkTransitions() {
         if (this.player.velocity.y >= 0) {
