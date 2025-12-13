@@ -2,8 +2,16 @@ import State from "../../lib/State.js";
 import Map from "../services/Map.js";
 import Player from "../entities/player/Player.js";
 import PlayerStateName from "../enums/PlayerStateName.js";
+import GameStateName from "../enums/GameStateName.js";
+import ImageName from "../enums/ImageName.js";
 import Camera from "../services/Camera.js";
-import { images, context, CANVAS_WIDTH, CANVAS_HEIGHT } from "../globals.js";
+import {
+    images,
+    context,
+    CANVAS_WIDTH,
+    CANVAS_HEIGHT,
+    stateMachine,
+} from "../globals.js";
 
 /**
  * Represents the main play state of the game.
@@ -17,7 +25,7 @@ export default class PlayState extends State {
     constructor(mapDefinition) {
         super();
 
-        this.map = new Map(mapDefinition, images.get("tiles"));
+        this.map = new Map(mapDefinition, images.get(ImageName.Tiles));
 
         // Create player at starting position
         this.player = new Player(2 * 16, 15 * 16, 16, 16, this.map);
@@ -36,6 +44,25 @@ export default class PlayState extends State {
     }
 
     /**
+     * Called when entering the play state.
+     * Resets the player's position and flags for a fresh start.
+     */
+    enter() {
+        // Reset player position to start
+        this.player.position.set(
+            this.player.initialPosition.x,
+            this.player.initialPosition.y
+        );
+
+        // Reset win/lose flags
+        this.player.hasWon = false;
+        this.player.hasDied = false;
+
+        // Reset player to falling state
+        this.player.stateMachine.change(PlayerStateName.Falling);
+    }
+
+    /**
      * Updates the play state.
      * @param {number} dt - The time passed since the last update.
      */
@@ -43,6 +70,22 @@ export default class PlayState extends State {
         this.map.update(dt);
         this.player.update(dt);
         this.camera.update(dt);
+
+        // Check for victory condition
+        if (this.player.hasWon) {
+            stateMachine.change(GameStateName.Transition, {
+                fromState: this,
+                toStateName: GameStateName.Victory,
+            });
+        }
+
+        // Check for game over condition
+        if (this.player.hasDied) {
+            stateMachine.change(GameStateName.Transition, {
+                fromState: this,
+                toStateName: GameStateName.GameOver,
+            });
+        }
     }
 
     /**
@@ -63,29 +106,5 @@ export default class PlayState extends State {
 
         // Reset camera transform
         this.camera.resetTransform(context);
-
-        // Display win message if player has won
-        if (this.player.hasWon) {
-            context.save();
-            context.fillStyle = "rgba(0, 0, 0, 0.3)";
-            context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-            context.fillStyle = "#FFD700";
-            context.font = "24px Arial";
-            context.textAlign = "center";
-            context.fillText("You Win!", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
-            context.restore();
-        }
-
-        // Display lose message if player has died
-        if (this.player.hasDied) {
-            context.save();
-            context.fillStyle = "rgba(0, 0, 0, 0.3)";
-            context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-            context.fillStyle = "#FF4444";
-            context.font = "24px Arial";
-            context.textAlign = "center";
-            context.fillText("You Lose!", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
-            context.restore();
-        }
     }
 }
