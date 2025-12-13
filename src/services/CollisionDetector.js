@@ -226,4 +226,31 @@ export default class CollisionDetector {
 
         return false;
     }
+
+    /**
+     * Checks if entity is colliding with a door tile (win condition).
+     * @param {Entity} entity - The entity to check.
+     * @returns {boolean} True if door collision occurred, false otherwise.
+     */
+    checkDoorCollision(entity) {
+        const tileSize = this.map.tileSize;
+        const tileLeft = Math.floor(entity.position.x / tileSize);
+        const tileRight = Math.floor(
+            (entity.position.x + entity.dimensions.x) / tileSize
+        );
+        const tileTop = Math.floor(entity.position.y / tileSize);
+        const tileBottom = Math.floor(
+            (entity.position.y + entity.dimensions.y) / tileSize
+        );
+
+        // Check all tiles the player overlaps with
+        for (let y = tileTop; y <= tileBottom; y++) {
+            for (let x = tileLeft; x <= tileRight; x++) {
+                if (this.map.isDoorTile(y, x)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

@@ -63,5 +63,17 @@ export default class PlayState extends State {
 
         // Reset camera transform
         this.camera.resetTransform(context);
+
+        // Display win message if player has won
+        if (this.player.hasWon) {
+            context.save();
+            context.fillStyle = "rgba(0, 0, 0, 0.3)";
+            context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            context.fillStyle = "#FFD700";
+            context.font = "24px Arial";
+            context.textAlign = "center";
+            context.fillText("You Win!", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
+            context.restore();
+        }
     }
 }

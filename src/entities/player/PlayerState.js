@@ -103,6 +103,11 @@ export default class PlayerState extends State {
 
         this.collisionDetector.checkVerticalCollisions(this.player);
 
+        //Check for door collision
+        if (this.collisionDetector.checkDoorCollision(this.player)) {
+            this.player.hasWon = true;
+        }
+
         // Keep player within horizontal map boundaries
         this.player.position.x = Math.max(
             0,
