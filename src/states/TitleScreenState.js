@@ -37,7 +37,7 @@ export default class TitleScreenState extends State {
         if (input.isKeyPressed(Input.KEYS.ENTER)) {
             stateMachine.change(GameStateName.Transition, {
                 fromState: this,
-                toState: stateMachine.states[GameStateName.Menu],
+                toStateName: GameStateName.HomeScreen,
             });
         }
     }

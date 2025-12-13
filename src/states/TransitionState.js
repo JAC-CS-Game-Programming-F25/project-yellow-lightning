@@ -21,7 +21,7 @@ export default class TransitionState extends State {
 
     enter(parameters) {
         this.fromState = parameters.fromState;
-        this.toState = parameters.toState;
+        this.toState = stateMachine.states[parameters.toStateName];
         this.toStateEnterParameters = parameters.toStateEnterParameters;
         this.currentState = this.fromState;
         this.transitionParameters = { alpha: 0 };
