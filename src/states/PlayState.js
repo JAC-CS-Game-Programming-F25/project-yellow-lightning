@@ -33,12 +33,6 @@ export default class PlayState extends State {
             this.map.width * 16,
             this.map.height * 16
         );
-
-        console.log(
-            "Player created at:",
-            this.player.position.x,
-            this.player.position.y
-        );
     }
 
     /**
