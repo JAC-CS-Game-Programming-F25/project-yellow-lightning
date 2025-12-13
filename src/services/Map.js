@@ -73,4 +73,70 @@ export default class Map {
         const tile = this.foregroundLayer.getTile(col, row);
         return tile !== null && tile.id !== -1;
     }
+
+    /**
+     * Checks if tile is a phase-through tile.
+     * Player can pass through these tiles.
+     * @param {number} row - The row to check.
+     * @param {number} col - The column to check.
+     * @returns {boolean} True if tile is a chain tile, false otherwise.
+     */
+    isPhaseThrough(row, col) {
+        const tile = this.foregroundLayer.getTile(col, row);
+        if (!tile) return false;
+        return (
+            tile.id === Tile.CHAIN_1 ||
+            tile.id === Tile.CHAIN_2 ||
+            tile.id === Tile.CHAIN_3 ||
+            tile.id === Tile.CHAIN_4 ||
+            tile.id === Tile.CHAIN_5
+        );
+    }
+
+    /**
+     * Checks if tile is a platform block.
+     * Can land on top, deadly on sides.
+     * @param {number} row - The row to check.
+     * @param {number} col - The column to check.
+     * @returns {boolean} True if tile is a platform block, false otherwise.
+     */
+    isPlatformTile(row, col) {
+        const tile = this.foregroundLayer.getTile(col, row);
+        if (!tile) return false;
+        return (
+            tile.id === Tile.PLATFORM_1 ||
+            tile.id === Tile.PLATFORM_2 ||
+            tile.id === Tile.PLATFORM_3 ||
+            tile.id === Tile.PLATFORM_4
+        );
+    }
+
+    /**
+     * Checks if tile is deadly (spikes/posts).
+     * Instant death on any contact.
+     * @param {number} row - The row to check.
+     * @param {number} col - The column to check.
+     * @returns {boolean} True if tile is deadly, false otherwise.
+     */
+    isDeadlyTile(row, col) {
+        const tile = this.foregroundLayer.getTile(col, row);
+        if (!tile) return false;
+
+        return (
+            tile.id === Tile.SPIKE_1 ||
+            tile.id === Tile.SPIKE_2 ||
+            tile.id === Tile.SPIKE_3 ||
+            tile.id === Tile.POST
+        );
+    }
+
+    /**
+     * Gets a block at the specified coordinates.
+     * @param {number} x - The x-coordinate.
+     * @param {number} y - The y-coordinate.
+     * @returns {null} Currently returns null as blocks are not implemented yet.
+     */
+    getBlockAt(x, y) {
+        return null;
+    }
 }

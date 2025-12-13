@@ -37,12 +37,6 @@ export default class PlayerState extends State {
         // Call the parent class's render method
         super.render();
 
-        console.log(
-            "Rendering player at:",
-            this.player.position.x,
-            this.player.position.y
-        );
-
         // Save the current canvas state
         context.save();
 
@@ -87,12 +81,26 @@ export default class PlayerState extends State {
         const dx = this.player.velocity.x * dt;
         const dy = this.player.velocity.y * dt;
 
-        // Update horizontal position and check for collisions
+        // Update horizontal position
         this.player.position.x += dx;
+
+        // Check for deadly collisions
+        if (this.collisionDetector.checkDeadlyCollisions(this.player)) {
+            this.player.die();
+            return;
+        }
+
+        // Then check regular collisions
         this.collisionDetector.checkHorizontalCollisions(this.player);
 
-        // Update vertical position and check for collisions
+        // Update vertical position
         this.player.position.y += dy;
+
+        if (this.collisionDetector.checkDeadlyCollisions(this.player)) {
+            this.player.die();
+            return;
+        }
+
         this.collisionDetector.checkVerticalCollisions(this.player);
 
         // Keep player within horizontal map boundaries
