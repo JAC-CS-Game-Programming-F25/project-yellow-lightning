@@ -2,6 +2,7 @@ import State from "../../lib/State.js";
 import Map from "../services/Map.js";
 import Player from "../entities/player/Player.js";
 import PlayerStateName from "../enums/PlayerStateName.js";
+import Camera from "../services/Camera.js";
 import { images, context, CANVAS_WIDTH, CANVAS_HEIGHT } from "../globals.js";
 
 /**
@@ -21,14 +22,23 @@ export default class PlayState extends State {
         // Create player at starting position
         this.player = new Player(2 * 16, 15 * 16, 16, 16, this.map);
 
+        // Start player in falling state
+        this.player.stateMachine.change(PlayerStateName.Falling);
+
+        // Create camera to follow the player
+        this.camera = new Camera(
+            this.player,
+            CANVAS_WIDTH,
+            CANVAS_HEIGHT,
+            this.map.width * 16,
+            this.map.height * 16
+        );
+
         console.log(
             "Player created at:",
             this.player.position.x,
             this.player.position.y
         );
-
-        // Start player in falling state
-        this.player.stateMachine.change(PlayerStateName.Falling);
     }
 
     /**
@@ -38,6 +48,7 @@ export default class PlayState extends State {
     update(dt) {
         this.map.update(dt);
         this.player.update(dt);
+        this.camera.update(dt);
     }
 
     /**
@@ -49,7 +60,14 @@ export default class PlayState extends State {
         context.fillStyle = "#5C94FC";
         context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
+        // Apply camera transform
+        this.camera.applyTransform(context);
+
+        // Render game world
         this.map.render(context);
         this.player.render(context);
+
+        // Reset camera transform
+        this.camera.resetTransform(context);
     }
 }
