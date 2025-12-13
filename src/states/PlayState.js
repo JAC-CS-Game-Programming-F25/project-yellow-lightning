@@ -1,5 +1,7 @@
 import State from "../../lib/State.js";
 import Map from "../services/Map.js";
+import Player from "../entities/player/Player.js";
+import PlayerStateName from "../enums/PlayerStateName.js";
 import { images, context, CANVAS_WIDTH, CANVAS_HEIGHT } from "../globals.js";
 
 /**
@@ -15,6 +17,18 @@ export default class PlayState extends State {
         super();
 
         this.map = new Map(mapDefinition, images.get("tiles"));
+
+        // Create player at starting position
+        this.player = new Player(
+            2 * 16, 
+            17 * 16, 
+            16, 
+            16, 
+            this.map
+        );
+
+        // Start player in falling state (will transition to idling when hitting ground)
+        this.player.stateMachine.change(PlayerStateName.Falling);
     }
 
     /**
@@ -23,6 +37,7 @@ export default class PlayState extends State {
      */
     update(dt) {
         this.map.update(dt);
+        this.player.update(dt);
     }
 
     /**
@@ -35,5 +50,6 @@ export default class PlayState extends State {
         context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
         this.map.render(context);
+        this.player.render(context);
     }
 }
