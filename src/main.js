@@ -25,6 +25,8 @@ import PlayState from "./states/PlayState.js";
 import GameOverState from "./states/GameOverState.js";
 import VictoryState from "./states/VictoryState.js";
 import TitleScreenState from "./states/TitleScreenState.js";
+import TransitionState from "./states/TransitionState.js";
+import HomeScreenState from "./states/HomeScreenState.js";
 
 // Set the dimensions of the play area.
 canvas.width = CANVAS_WIDTH;
@@ -52,12 +54,14 @@ const mapDefinition = await fetch("./config/levelone.json").then((response) =>
 );
 
 // Add all the states to the state machine.
+stateMachine.add(GameStateName.Transition, new TransitionState());
 stateMachine.add(GameStateName.TitleScreen, new TitleScreenState());
+stateMachine.add(GameStateName.HomeScreen, new HomeScreenState()); 
 stateMachine.add(GameStateName.GameOver, new GameOverState());
 stateMachine.add(GameStateName.Victory, new VictoryState());
 stateMachine.add(GameStateName.Play, new PlayState(mapDefinition));
 
-stateMachine.change(GameStateName.Play);
+stateMachine.change(GameStateName.TitleScreen);
 
 const game = new Game(
     stateMachine,

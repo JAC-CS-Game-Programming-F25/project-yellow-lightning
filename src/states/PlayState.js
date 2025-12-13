@@ -2,6 +2,7 @@ import State from "../../lib/State.js";
 import Map from "../services/Map.js";
 import Player from "../entities/player/Player.js";
 import PlayerStateName from "../enums/PlayerStateName.js";
+import ImageName from "../enums/ImageName.js";
 import Camera from "../services/Camera.js";
 import { images, context, CANVAS_WIDTH, CANVAS_HEIGHT } from "../globals.js";
 
@@ -17,7 +18,7 @@ export default class PlayState extends State {
     constructor(mapDefinition) {
         super();
 
-        this.map = new Map(mapDefinition, images.get("tiles"));
+        this.map = new Map(mapDefinition, images.get(ImageName.Tiles));
 
         // Create player at starting position
         this.player = new Player(2 * 16, 15 * 16, 16, 16, this.map);

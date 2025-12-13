@@ -5,8 +5,14 @@
             "path": "./assets/images/SpriteSheet.png",
             "width": 339,
             "height": 339
+        },
+        {
+            "name": "background",
+            "path": "./assets/images/background.jpg"
         }
     ],
-    "fonts": [],
+    "fonts": [
+        { "name": "Zelda", "path": "./assets/fonts/Zelda.otf", "size": "50px" }
+    ],
     "sounds": []
 }
