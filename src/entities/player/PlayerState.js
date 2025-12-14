@@ -3,6 +3,7 @@ import { PlayerConfig } from "../../../config/PlayerConfig.js";
 import Tile from "../../services/Tile.js";
 import CollisionDetector from "../../services/CollisionDetector.js";
 import Player from "./Player.js";
+import PlayerStateName from "../../enums/PlayerStateName.js";
 
 /**
  * Base class for all player states.
@@ -83,7 +84,7 @@ export default class PlayerState extends State {
 
         // Check for deadly collisions
         if (this.collisionDetector.checkDeadlyCollisions(this.player)) {
-            this.player.die();
+            this.player.stateMachine.change(PlayerStateName.Dying);
             return;
         }
 
@@ -94,7 +95,7 @@ export default class PlayerState extends State {
         this.player.position.y += dy;
 
         if (this.collisionDetector.checkDeadlyCollisions(this.player)) {
-            this.player.die();
+            this.player.stateMachine.change(PlayerStateName.Dying);
             return;
         }
 
@@ -102,7 +103,7 @@ export default class PlayerState extends State {
 
         //Check for door collision
         if (this.collisionDetector.checkDoorCollision(this.player)) {
-            this.player.hasWon = true;
+            this.player.stateMachine.change(PlayerStateName.Victory);
         }
 
         // Keep player within horizontal map boundaries

@@ -1,9 +1,9 @@
-import PlayerState from './PlayerState.js';
-import { input } from '../../globals.js';
-import { PlayerConfig } from '../../../config/PlayerConfig.js';
-import Input from '../../../lib/Input.js';
-import PlayerStateName from '../../enums/PlayerStateName.js';
-import Player from './Player.js';
+import PlayerState from "./PlayerState.js";
+import { input } from "../../globals.js";
+import { PlayerConfig } from "../../../config/PlayerConfig.js";
+import Input from "../../../lib/Input.js";
+import PlayerStateName from "../../enums/PlayerStateName.js";
+import Player from "./Player.js";
 
 /**
  * Represents the running state of the player.

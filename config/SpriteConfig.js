@@ -4,7 +4,7 @@ import Sprite from "../lib/Sprite.js";
  * Configuration for player sprite frames.
  */
 export const playerSpriteConfig = {
-    // Idle animation 
+    // Idle animation
     idle: [{ x: 0, y: 204, width: 16, height: 16 }],
     // Running animation - 6 frames
     run: [
@@ -17,8 +17,24 @@ export const playerSpriteConfig = {
     ],
     // Jump animation
     jump: [{ x: 34, y: 204, width: 16, height: 16 }],
-    // Fall animation 
-    fall: [{ x: 85, y: 221, width: 16, height: 16 }],
+    // Fall animation
+    fall: [
+        { x: 85, y: 221, width: 16, height: 16 },
+        { x: 85, y: 255, width: 16, height: 16 },
+    ],
+
+    death: [
+        { x: 0, y: 272, width: 16, height: 16 },
+        { x: 17, y: 272, width: 16, height: 16 },
+        { x: 34, y: 272, width: 16, height: 16 },
+        { x: 51, y: 272, width: 16, height: 16 },
+        { x: 68, y: 272, width: 16, height: 16 },
+    ],
+    victory: [
+        { x: 0, y: 204, width: 16, height: 16 },
+        { x: 85, y: 255, width: 16, height: 16 },
+        { x: 85, y: 221, width: 16, height: 16 },
+    ],
 };
 
 /**
