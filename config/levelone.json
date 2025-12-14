@@ -32,6 +32,20 @@
          "x":0,
          "y":0
         }],
+"enemies":[
+       {
+              "type": "Skull",
+              "x": 930,
+              "y": 240,
+              "moving": true
+       },
+       {
+              "type": "Skull",
+              "x": 1808,
+              "y": 258,
+              "moving": false
+       }
+ ],
  "nextlayerid":2,
  "nextobjectid":1,
  "orientation":"orthogonal",

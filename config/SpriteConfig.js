@@ -37,6 +37,11 @@ export const playerSpriteConfig = {
     ],
 };
 
+export const skullSpriteConfig = [
+    { x: 0, y: 323, width: 16, height: 16 },
+    { x: 17, y: 323, width: 16, height: 16 },
+];
+
 /**
  * Loads player sprites from a sprite sheet based on the configuration.
  *
@@ -61,4 +66,17 @@ export function loadPlayerSprites(spriteSheet, spriteConfig) {
     }
 
     return sprites;
+}
+
+/**
+ * Loads enemy sprites from a sprite sheet.
+ * @param {Graphic} spriteSheet - The sprite sheet image
+ * @param {Array} spriteConfig - Array of sprite frame configurations
+ * @returns {Array} Array of Sprite objects
+ */
+export function loadEnemySprites(spriteSheet, spriteConfig) {
+    return spriteConfig.map(
+        (frame) =>
+            new Sprite(spriteSheet, frame.x, frame.y, frame.width, frame.height)
+    );
 }

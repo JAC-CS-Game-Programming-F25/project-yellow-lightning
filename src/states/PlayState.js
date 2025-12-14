@@ -6,6 +6,11 @@ import GameStateName from "../enums/GameStateName.js";
 import ImageName from "../enums/ImageName.js";
 import Camera from "../services/Camera.js";
 import ScorePanel from "../user-interface/elements/ScorePanel.js";
+import Factory from "../services/Factory.js";
+import {
+    loadEnemySprites,
+    skullSpriteConfig,
+} from "../../config/SpriteConfig.js";
 import {
     images,
     context,
@@ -36,6 +41,7 @@ export default class PlayState extends State {
 
         // Create player at starting position
         this.player = new Player(2 * 16, 15 * 16, 16, 16, this.map);
+        this.player.playState = this;
 
         // Start player in falling state
         this.player.stateMachine.change(PlayerStateName.Falling);
@@ -51,6 +57,40 @@ export default class PlayState extends State {
 
         // Create score panel
         this.scorePanel = new ScorePanel(0, this.map.totalCoins);
+
+        // Initialize enemies array
+        this.enemies = [];
+        this.spawnEnemies();
+    }
+
+    /**
+     * Spawns enemies from level data.
+     */
+    spawnEnemies() {
+        // Load skull sprites
+        const skullSprites = loadEnemySprites(
+            images.get(ImageName.Tiles),
+            skullSpriteConfig
+        );
+
+        // Get current level definition
+        const levelToLoad = levelDefinitions[currentLevel];
+
+        // Check if level has enemy data
+        if (levelToLoad.enemies && levelToLoad.enemies.length > 0) {
+            // Spawn enemies from level data
+            levelToLoad.enemies.forEach((enemyData) => {
+                this.enemies.push(
+                    Factory.createEnemy(
+                        enemyData.type,
+                        skullSprites,
+                        enemyData.x,
+                        enemyData.y,
+                        enemyData.moving
+                    )
+                );
+            });
+        }
     }
 
     /**
@@ -98,6 +138,26 @@ export default class PlayState extends State {
 
         // Reset score panel with new map's total coins
         this.scorePanel = new ScorePanel(0, this.map.totalCoins);
+
+        this.player.playState = this;
+
+        // Respawn enemies
+        this.enemies = [];
+        this.spawnEnemies();
+    }
+
+    /**
+     * Checks if player is colliding with any enemies.
+     * This is called from PlayerState to check enemy collisions.
+     * @returns {boolean} True if collision with enemy occurred, false otherwise.
+     */
+    checkEnemyCollisions() {
+        for (let enemy of this.enemies) {
+            if (!enemy.isDead && this.player.collidesWith(enemy)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -108,6 +168,9 @@ export default class PlayState extends State {
         this.map.update(dt);
         this.player.update(dt);
         this.camera.update(dt);
+
+        // Update all enemies
+        this.enemies.forEach((enemy) => enemy.update(dt));
 
         // Update score panel
         this.scorePanel.updateScore(this.player.coinsCollected);
@@ -146,6 +209,10 @@ export default class PlayState extends State {
 
         // Render game world
         this.map.render(context);
+
+        // Render enemies
+        this.enemies.forEach((enemy) => enemy.render(context));
+
         this.player.render(context);
 
         // Reset camera transform
