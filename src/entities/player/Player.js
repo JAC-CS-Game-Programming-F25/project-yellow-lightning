@@ -41,6 +41,7 @@ export default class Player extends Entity {
         this.hasWon = false;
         this.hasDied = false;
         this.coinsCollected = 0;
+        this.playState = null;
 
         // Load player sprites
         this.sprites = loadPlayerSprites(

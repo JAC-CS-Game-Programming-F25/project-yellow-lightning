@@ -102,13 +102,32 @@ export default class PlayerState extends State {
             return;
         }
 
+        // Check for enemy collisions
+        if (
+            this.player.playState &&
+            this.player.playState.checkEnemyCollisions()
+        ) {
+            this.player.stateMachine.change(PlayerStateName.Dying);
+            return;
+        }
+
         // Then check regular collisions
         this.collisionDetector.checkHorizontalCollisions(this.player);
 
         // Update vertical position
         this.player.position.y += dy;
 
+        // Check for deadly collisions
         if (this.collisionDetector.checkDeadlyCollisions(this.player)) {
+            this.player.stateMachine.change(PlayerStateName.Dying);
+            return;
+        }
+
+        // Check for enemy collisions
+        if (
+            this.player.playState &&
+            this.player.playState.checkEnemyCollisions()
+        ) {
             this.player.stateMachine.change(PlayerStateName.Dying);
             return;
         }
