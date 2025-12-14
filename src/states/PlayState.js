@@ -7,6 +7,7 @@ import ImageName from "../enums/ImageName.js";
 import Camera from "../services/Camera.js";
 import ScorePanel from "../user-interface/elements/ScorePanel.js";
 import Factory from "../services/Factory.js";
+import SaveManager from "../services/SaveManager.js";
 import {
     loadEnemySprites,
     skullSpriteConfig,
@@ -61,6 +62,13 @@ export default class PlayState extends State {
         // Initialize enemies array
         this.enemies = [];
         this.spawnEnemies();
+
+        // Initialize autosave timer
+        this.autosaveTimer = 0;
+        this.AUTOSAVE_INTERVAL = 2; // Save every 2 seconds
+
+        // Track collected coin positions for saving
+        this.collectedCoinPositions = [];
     }
 
     /**
@@ -91,6 +99,18 @@ export default class PlayState extends State {
                 );
             });
         }
+    }
+
+    /**
+     * Tracks a collected coin position and removes it from the map
+     * @param {number} x - Tile X coordinate
+     * @param {number} y - Tile Y coordinate
+     */
+    collectCoin(x, y) {
+        // Add to collected positions list
+        this.collectedCoinPositions.push({ x: x, y: y });
+        // Remove from map
+        this.map.removeTile(x, y);
     }
 
     /**
@@ -130,8 +150,9 @@ export default class PlayState extends State {
         this.player.hasWon = false;
         this.player.hasDied = false;
 
-        // Reset coin counter
+        // Reset coin counter and collected positions
         this.player.coinsCollected = 0;
+        this.collectedCoinPositions = [];
 
         // Reset player to falling state
         this.player.stateMachine.change(PlayerStateName.Falling);
@@ -144,6 +165,37 @@ export default class PlayState extends State {
         // Respawn enemies
         this.enemies = [];
         this.spawnEnemies();
+
+        // Try to load saved game progress
+        const savedProgress = SaveManager.loadGameProgress();
+        if (savedProgress && savedProgress.level === currentLevel) {
+            // Restore player position
+            this.player.position.set(
+                savedProgress.playerX,
+                savedProgress.playerY
+            );
+
+            // Restore coins collected count
+            this.player.coinsCollected = savedProgress.coinsCollected;
+            this.scorePanel.updateScore(savedProgress.coinsCollected);
+
+            // Restore collected coin positions by removing those coins from the map
+            if (
+                savedProgress.collectedCoinPositions &&
+                savedProgress.collectedCoinPositions.length > 0
+            ) {
+                savedProgress.collectedCoinPositions.forEach((coinPos) => {
+                    this.map.removeTile(coinPos.x, coinPos.y);
+                });
+                // Copy the collected positions array
+                this.collectedCoinPositions = [
+                    ...savedProgress.collectedCoinPositions,
+                ];
+            }
+        }
+
+        // Reset autosave timer
+        this.autosaveTimer = 0;
     }
 
     /**
@@ -166,6 +218,20 @@ export default class PlayState extends State {
      */
     update(dt) {
         this.map.update(dt);
+
+        // Autosave progress every 2 seconds
+        this.autosaveTimer += dt;
+        if (this.autosaveTimer >= this.AUTOSAVE_INTERVAL) {
+            this.autosaveTimer = 0;
+            SaveManager.saveGameProgress(
+                currentLevel,
+                this.player.position.x,
+                this.player.position.y,
+                this.player.coinsCollected,
+                this.collectedCoinPositions
+            );
+        }
+
         this.player.update(dt);
         this.camera.update(dt);
 
@@ -180,6 +246,9 @@ export default class PlayState extends State {
             // Update high score with coins collected
             updateHighScore(currentLevel, this.player.coinsCollected);
 
+            // Clear saved progress since level is complete
+            SaveManager.clearGameProgress();
+
             stateMachine.change(GameStateName.Transition, {
                 fromState: this,
                 toStateName: GameStateName.Victory,
@@ -188,6 +257,9 @@ export default class PlayState extends State {
 
         // Check for game over condition
         if (this.player.hasDied) {
+            // Clear saved progress on death
+            SaveManager.clearGameProgress();
+
             stateMachine.change(GameStateName.Transition, {
                 fromState: this,
                 toStateName: GameStateName.GameOver,

@@ -254,9 +254,9 @@ export default class CollisionDetector {
     }
 
     /**
-     * Checks if entity is colliding with coin tiles and collects them.
+     * Checks if entity is colliding with coin tiles and returns their positions.
      * @param {Entity} entity - The entity to check.
-     * @returns {number} Number of coins collected this frame.
+     * @returns {Array} Array of {x, y, count} with coin positions collected
      */
     checkCoinCollisions(entity) {
         const tileSize = this.map.tileSize;
@@ -269,7 +269,7 @@ export default class CollisionDetector {
             (entity.position.y + entity.dimensions.y) / tileSize
         );
 
-        let coinsCollected = 0;
+        const collectedCoins = [];
 
         // Check all tiles the player overlaps with
         for (let y = tileTop; y <= tileBottom; y++) {
@@ -277,12 +277,13 @@ export default class CollisionDetector {
                 if (this.map.isCoinTile(y, x)) {
                     // Remove the coin from the map
                     this.map.removeTile(x, y);
-                    coinsCollected++;
+                    // Return the position
+                    collectedCoins.push({ x: x, y: y });
                 }
             }
         }
 
-        return coinsCollected;
+        return collectedCoins;
     }
 
     /**

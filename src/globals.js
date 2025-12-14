@@ -4,6 +4,7 @@ import Sounds from "../lib/Sounds.js";
 import StateMachine from "../lib/StateMachine.js";
 import Timer from "../lib/Timer.js";
 import Input from "../lib/Input.js";
+import SaveManager from "./services/SaveManager.js";
 
 export const canvas = document.createElement("canvas");
 export const context =
@@ -40,12 +41,8 @@ export const sounds = new Sounds();
 export let levelDefinitions = {};
 export let currentLevel = 1;
 
-// High scores - stored as { levelNumber: score }
-export let highScores = {
-    1: 0,
-    2: 0,
-    3: 0,
-};
+// High scores - loaded from localStorage
+export let highScores = SaveManager.loadHighScores();
 
 export function setLevelDefinitions(definitions) {
     levelDefinitions = definitions;
@@ -57,12 +54,14 @@ export function setCurrentLevel(level) {
 
 /**
  * Updates the high score for a level if the new score is better.
+ * Automatically saves to localStorage.
  * @param {number} levelNumber - The level number.
  * @param {number} score - The score to compare.
  */
 export function updateHighScore(levelNumber, score) {
     if (!highScores[levelNumber] || score > highScores[levelNumber]) {
         highScores[levelNumber] = score;
+        SaveManager.saveHighScores(highScores);
     }
 }
 

@@ -12,6 +12,7 @@ import {
     stateMachine,
     timer,
 } from "../globals.js";
+import SaveManager from "../services/SaveManager.js";
 
 export default class GameOverState extends State {
     /**
@@ -22,6 +23,8 @@ export default class GameOverState extends State {
     }
 
     enter() {
+        SaveManager.clearGameProgress();
+
         // Create the panel for the menu
         const panelWidth = 300;
         const panelHeight = 220;
