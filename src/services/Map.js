@@ -23,12 +23,18 @@ export default class Map {
         this.tileSize = mapDefinition.tilewidth;
         this.tilesets = mapDefinition.tilesets;
 
+        // Store original map definition for resetting
+        this.mapDefinition = mapDefinition;
+
         // Generate sprites from the tileset image with spacing
         const sprites = Sprite.generateSpritesFromSpriteSheet(
             tilesetImage,
             this.tileSize,
             this.tileSize
         );
+
+        // Store sprites for resetting
+        this.sprites = sprites;
 
         // Create Layer instances for each layer in the map definition
         this.layers = mapDefinition.layers.map(
@@ -42,6 +48,16 @@ export default class Map {
      * @param {number} dt - The time passed since the last update.
      */
     update(dt) {}
+
+    /**
+     * Resets the map to its original state. For coins
+     */
+    reset() {
+        this.layers = this.mapDefinition.layers.map(
+            (layerData) => new Layer(layerData, this.sprites)
+        );
+        this.foregroundLayer = this.layers[Map.FOREGROUND_LAYER];
+    }
 
     /**
      * Renders the map and all its layers.
@@ -76,10 +92,10 @@ export default class Map {
 
     /**
      * Checks if tile is a phase-through tile.
-     * Player can pass through these tiles.
+     * Player can pass through these tiles (chains, nature decorations, and coins).
      * @param {number} row - The row to check.
      * @param {number} col - The column to check.
-     * @returns {boolean} True if tile is a chain tile, false otherwise.
+     * @returns {boolean} True if tile is a phase-through tile, false otherwise.
      */
     isPhaseThrough(row, col) {
         const tile = this.foregroundLayer.getTile(col, row);
@@ -89,7 +105,15 @@ export default class Map {
             tile.id === Tile.CHAIN_2 ||
             tile.id === Tile.CHAIN_3 ||
             tile.id === Tile.CHAIN_4 ||
-            tile.id === Tile.CHAIN_5
+            tile.id === Tile.CHAIN_5 ||
+            tile.id === Tile.NATURE_1 ||
+            tile.id === Tile.NATURE_2 ||
+            tile.id === Tile.NATURE_3 ||
+            tile.id === Tile.NATURE_4 ||
+            tile.id === Tile.NATURE_5 ||
+            tile.id === Tile.NATURE_6 ||
+            tile.id === Tile.COIN ||
+            tile.id === Tile.BOOSTER
         );
     }
 
@@ -107,7 +131,10 @@ export default class Map {
             tile.id === Tile.PLATFORM_1 ||
             tile.id === Tile.PLATFORM_2 ||
             tile.id === Tile.PLATFORM_3 ||
-            tile.id === Tile.PLATFORM_4
+            tile.id === Tile.PLATFORM_4 ||
+            tile.id === Tile.PLATFORM_5 ||
+            tile.id === Tile.PLATFORM_6 ||
+            tile.id === Tile.PLATFORM_7
         );
     }
 
@@ -126,7 +153,12 @@ export default class Map {
             tile.id === Tile.SPIKE_1 ||
             tile.id === Tile.SPIKE_2 ||
             tile.id === Tile.SPIKE_3 ||
-            tile.id === Tile.POST
+            tile.id === Tile.POST_1 ||
+            tile.id === Tile.POST_2 ||
+            tile.id === Tile.POST_3 ||
+            tile.id === Tile.POST_4 ||
+            tile.id === Tile.POST_5 ||
+            tile.id === Tile.POKER
         );
     }
 
@@ -143,12 +175,35 @@ export default class Map {
     }
 
     /**
-     * Gets a block at the specified coordinates.
-     * @param {number} x - The x-coordinate.
-     * @param {number} y - The y-coordinate.
-     * @returns {null} Currently returns null as blocks are not implemented yet.
+     * Checks if tile is a coin (collectible).
+     * @param {number} row - The row to check.
+     * @param {number} col - The column to check.
+     * @returns {boolean} True if tile is a coin, false otherwise.
      */
-    getBlockAt(x, y) {
-        return null;
+    isCoinTile(row, col) {
+        const tile = this.foregroundLayer.getTile(col, row);
+        if (!tile) return false;
+        return tile.id === Tile.COIN;
+    }
+
+    /**
+     * Removes a tile at the specified position (used for collecting coins).
+     * @param {number} col - The column of the tile.
+     * @param {number} row - The row of the tile.
+     */
+    removeTile(col, row) {
+        this.foregroundLayer.setTile(col, row, null);
+    }
+
+    /**
+     * Checks if tile is a booster (launches player up).
+     * @param {number} row - The row to check.
+     * @param {number} col - The column to check.
+     * @returns {boolean} True if tile is a booster, false otherwise.
+     */
+    isBoosterTile(row, col) {
+        const tile = this.foregroundLayer.getTile(col, row);
+        if (!tile) return false;
+        return tile.id === Tile.BOOSTER;
     }
 }

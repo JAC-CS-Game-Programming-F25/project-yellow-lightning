@@ -1,6 +1,6 @@
 export const PlayerConfig = {
-    runSpeed: 200,
-    jumpPower: -400,
-    gravity: 1000,
+    runSpeed: 100,
+    jumpPower: -350,
+    gravity: 1350,
     maxFallSpeed: 800,
 };

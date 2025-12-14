@@ -35,3 +35,15 @@ export const stateMachine = new StateMachine();
 export const timer = new Timer();
 export const input = new Input(canvas);
 export const sounds = new Sounds();
+
+// Level management
+export let levelDefinitions = {};
+export let currentLevel = 1;
+
+export function setLevelDefinitions(definitions) {
+    levelDefinitions = definitions;
+}
+
+export function setCurrentLevel(level) {
+    currentLevel = level;
+}
