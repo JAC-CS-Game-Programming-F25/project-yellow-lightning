@@ -5,6 +5,7 @@ import PlayerStateName from "../enums/PlayerStateName.js";
 import GameStateName from "../enums/GameStateName.js";
 import ImageName from "../enums/ImageName.js";
 import Camera from "../services/Camera.js";
+import ScorePanel from "../user-interface/elements/ScorePanel.js";
 import {
     images,
     context,
@@ -13,6 +14,7 @@ import {
     stateMachine,
     levelDefinitions,
     currentLevel,
+    updateHighScore,
 } from "../globals.js";
 
 /**
@@ -46,6 +48,9 @@ export default class PlayState extends State {
             this.map.width * 16,
             this.map.height * 16
         );
+
+        // Create score panel
+        this.scorePanel = new ScorePanel(0, this.map.totalCoins);
     }
 
     /**
@@ -90,6 +95,9 @@ export default class PlayState extends State {
 
         // Reset player to falling state
         this.player.stateMachine.change(PlayerStateName.Falling);
+
+        // Reset score panel with new map's total coins
+        this.scorePanel = new ScorePanel(0, this.map.totalCoins);
     }
 
     /**
@@ -101,8 +109,14 @@ export default class PlayState extends State {
         this.player.update(dt);
         this.camera.update(dt);
 
+        // Update score panel
+        this.scorePanel.updateScore(this.player.coinsCollected);
+
         // Check for victory condition
         if (this.player.hasWon) {
+            // Update high score with coins collected
+            updateHighScore(currentLevel, this.player.coinsCollected);
+
             stateMachine.change(GameStateName.Transition, {
                 fromState: this,
                 toStateName: GameStateName.Victory,
@@ -136,5 +150,8 @@ export default class PlayState extends State {
 
         // Reset camera transform
         this.camera.resetTransform(context);
+
+        // Render UI (score panel) without camera transform
+        this.scorePanel.render();
     }
 }

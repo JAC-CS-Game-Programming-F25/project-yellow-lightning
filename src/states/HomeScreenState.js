@@ -11,6 +11,7 @@ import {
     stateMachine,
     timer,
     setCurrentLevel,
+    getHighScore,
 } from "../globals.js";
 
 export default class HomeScreenState extends State {
@@ -24,7 +25,7 @@ export default class HomeScreenState extends State {
     enter() {
         // Create the panel for the menu
         const panelWidth = 250;
-        const panelHeight = 200;
+        const panelHeight = 250;
         const panelX = (CANVAS_WIDTH - panelWidth) / 2;
         const panelY = (CANVAS_HEIGHT - panelHeight) / 2;
 
@@ -39,6 +40,11 @@ export default class HomeScreenState extends State {
         const selectionWidth = panelWidth - 40;
         const selectionHeight = panelHeight - 40;
 
+        // Get high scores for display
+        const score1 = getHighScore(1);
+        const score2 = getHighScore(2);
+        const score3 = getHighScore(3);
+
         this.selection = new Selection(
             selectionX,
             selectionY,
@@ -46,19 +52,19 @@ export default class HomeScreenState extends State {
             selectionHeight,
             [
                 {
-                    text: "Level 1",
+                    text: `Level 1 - Best ${score1}/3`,
                     onSelect: () => {
                         this.startLevel(1);
                     },
                 },
                 {
-                    text: "Level 2",
+                    text: `Level 2 - Best ${score2}/3`,
                     onSelect: () => {
                         this.startLevel(2);
                     },
                 },
                 {
-                    text: "Level 3",
+                    text: `Level 3 - Best ${score3}/3`,
                     onSelect: () => {
                         this.startLevel(3);
                     },
