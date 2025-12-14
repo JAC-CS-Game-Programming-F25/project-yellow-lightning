@@ -5,7 +5,7 @@ import Player from "./Player.js";
 
 /**
  * Represents the jumping state of the player.
- * Player moves upward with initial jump velocity, then transitions to falling.
+ * Player is in the air, moving upward with initial jump velocity.
  * @extends PlayerState
  */
 export default class PlayerJumpingState extends PlayerState {
@@ -19,15 +19,14 @@ export default class PlayerJumpingState extends PlayerState {
 
     /**
      * Called when entering the jumping state.
+     * Applies initial upward velocity for the jump.
      */
     enter() {
+        this.player.isOnGround = false;
         this.player.velocity.y = PlayerConfig.jumpPower;
+        this.player.currentAnimation = this.player.animations.jump;
+        this.player.currentAnimation.refresh();
     }
-
-    /**
-     * Called when exiting the jumping state.
-     */
-    exit() {}
 
     /**
      * Updates the jumping state.
@@ -40,8 +39,7 @@ export default class PlayerJumpingState extends PlayerState {
     }
 
     /**
-     * Maintains constant forward running speed.
-     * Player always moves right at a constant speed.
+     * Maintains constant forward running speed even while jumping.
      */
     maintainRunSpeed() {
         this.player.velocity.x = PlayerConfig.runSpeed;
@@ -49,11 +47,16 @@ export default class PlayerJumpingState extends PlayerState {
 
     /**
      * Checks for state transitions.
-     * When velocity becomes positive (moving downward), switch to falling.
+     * If player starts falling, transition to falling state.
+     * If player lands on ground, transition to running state.
      */
     checkTransitions() {
         if (this.player.velocity.y >= 0) {
             this.player.stateMachine.change(PlayerStateName.Falling);
+        }
+
+        if (this.player.isOnGround) {
+            this.player.stateMachine.change(PlayerStateName.Running);
         }
     }
 }
