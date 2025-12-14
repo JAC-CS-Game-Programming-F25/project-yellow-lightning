@@ -10,6 +10,7 @@ import {
     images,
     stateMachine,
     timer,
+    setCurrentLevel,
 } from "../globals.js";
 
 export default class HomeScreenState extends State {
@@ -47,19 +48,19 @@ export default class HomeScreenState extends State {
                 {
                     text: "Level 1",
                     onSelect: () => {
-                        this.startLevel();
+                        this.startLevel(1);
                     },
                 },
                 {
                     text: "Level 2",
                     onSelect: () => {
-                        this.startLevel();
+                        this.startLevel(2);
                     },
                 },
                 {
                     text: "Level 3",
                     onSelect: () => {
-                        this.startLevel();
+                        this.startLevel(3);
                     },
                 },
             ]
@@ -84,11 +85,10 @@ export default class HomeScreenState extends State {
 
     /**
      * Start the selected level with a transition
+     * @param {number} levelNumber - The level number to start
      */
-    startLevel() {
-        stateMachine.change(GameStateName.Transition, {
-            fromState: this,
-            toStateName: GameStateName.Play,
-        });
+    startLevel(levelNumber) {
+        setCurrentLevel(levelNumber);
+        stateMachine.change(GameStateName.Play);
     }
 }

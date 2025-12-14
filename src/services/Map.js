@@ -112,7 +112,8 @@ export default class Map {
             tile.id === Tile.NATURE_4 ||
             tile.id === Tile.NATURE_5 ||
             tile.id === Tile.NATURE_6 ||
-            tile.id === Tile.COIN
+            tile.id === Tile.COIN ||
+            tile.id === Tile.BOOSTER
         );
     }
 
@@ -156,7 +157,8 @@ export default class Map {
             tile.id === Tile.POST_2 ||
             tile.id === Tile.POST_3 ||
             tile.id === Tile.POST_4 ||
-            tile.id === Tile.POST_5
+            tile.id === Tile.POST_5 ||
+            tile.id === Tile.POKER
         );
     }
 
@@ -194,12 +196,14 @@ export default class Map {
     }
 
     /**
-     * Gets a block at the specified coordinates.
-     * @param {number} x - The x-coordinate.
-     * @param {number} y - The y-coordinate.
-     * @returns {null} Currently returns null as blocks are not implemented yet.
+     * Checks if tile is a booster (launches player up).
+     * @param {number} row - The row to check.
+     * @param {number} col - The column to check.
+     * @returns {boolean} True if tile is a booster, false otherwise.
      */
-    getBlockAt(x, y) {
-        return null;
+    isBoosterTile(row, col) {
+        const tile = this.foregroundLayer.getTile(col, row);
+        if (!tile) return false;
+        return tile.id === Tile.BOOSTER;
     }
 }

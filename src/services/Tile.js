@@ -20,6 +20,7 @@ export default class Tile {
     static POST_3 = 202;
     static POST_4 = 203;
     static POST_5 = 222;
+    static POKER = 6;
 
     // Phase-through tiles
     static CHAIN_1 = 4;
@@ -48,9 +49,13 @@ export default class Tile {
     static FLOOR_1 = 196;
     static FLOOR_2 = 276;
     static FLOOR_3 = 336;
+    static FLOOR_4 = 104;
+    static FLOOR_5 = 105;
+    static FLOOR_6 = 106;
 
     // Special tiles
     static DOOR = 58;
+    static BOOSTER = 163;
 
     // Collectables
     static COIN = 21;

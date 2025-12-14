@@ -11,6 +11,8 @@ import {
     CANVAS_WIDTH,
     CANVAS_HEIGHT,
     stateMachine,
+    levelDefinitions,
+    currentLevel,
 } from "../globals.js";
 
 /**
@@ -20,12 +22,15 @@ import {
 export default class PlayState extends State {
     /**
      * Creates a new PlayState instance.
-     * @param {Object} mapDefinition - The definition object for the game map.
+     * @param {Object} mapDefinition - The definition object for the game map (optional, uses currentLevel if not provided).
      */
-    constructor(mapDefinition) {
+    constructor(mapDefinition = null) {
         super();
 
-        this.map = new Map(mapDefinition, images.get(ImageName.Tiles));
+        // Use provided map definition or load from current level
+        const levelToLoad = mapDefinition || levelDefinitions[currentLevel];
+
+        this.map = new Map(levelToLoad, images.get(ImageName.Tiles));
 
         // Create player at starting position
         this.player = new Player(2 * 16, 15 * 16, 16, 16, this.map);
@@ -48,8 +53,27 @@ export default class PlayState extends State {
      * Resets the player's position and flags for a fresh start.
      */
     enter() {
-        // Reset the map to restore all coins and tiles
-        this.map.reset();
+        // Reload the map for the current level
+        const levelToLoad = levelDefinitions[currentLevel];
+        this.map = new Map(levelToLoad, images.get(ImageName.Tiles));
+        this.player.map = this.map;
+
+        // Then point the collision detector to the ne map
+        const states = this.player.stateMachine.states;
+        for (let stateName in states) {
+            if (states[stateName].collisionDetector) {
+                states[stateName].collisionDetector.map = this.map;
+            }
+        }
+
+        // Update camera for map dimensions
+        this.camera = new Camera(
+            this.player,
+            CANVAS_WIDTH,
+            CANVAS_HEIGHT,
+            this.map.width * 16,
+            this.map.height * 16
+        );
 
         // Reset player position to start
         this.player.position.set(

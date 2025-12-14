@@ -20,6 +20,7 @@ import {
     timer,
     sounds,
     stateMachine,
+    setLevelDefinitions,
 } from "./globals.js";
 import PlayState from "./states/PlayState.js";
 import GameOverState from "./states/GameOverState.js";
@@ -48,19 +49,26 @@ images.load(imageDefinitions);
 fonts.load(fontDefinitions);
 sounds.load(soundDefinitions);
 
-// Load the tilemap definition
-const mapDefinition = await fetch("./config/levelone.json").then((response) =>
-    response.json()
-);
+// Load all level definitions
+const levelDefinitions = {
+    1: await fetch("./config/levelone.json").then((response) =>
+        response.json()
+    ),
+    2: await fetch("./config/leveltwo.json").then((response) =>
+        response.json()
+    ),
+};
+
+// Store level definitions globally for access by other states
+setLevelDefinitions(levelDefinitions);
 
 // Add all the states to the state machine.
 stateMachine.add(GameStateName.Transition, new TransitionState());
 stateMachine.add(GameStateName.TitleScreen, new TitleScreenState());
-stateMachine.add(GameStateName.HomeScreen, new HomeScreenState()); 
+stateMachine.add(GameStateName.HomeScreen, new HomeScreenState());
 stateMachine.add(GameStateName.GameOver, new GameOverState());
 stateMachine.add(GameStateName.Victory, new VictoryState());
-stateMachine.add(GameStateName.Play, new PlayState(mapDefinition));
-
+stateMachine.add(GameStateName.Play, new PlayState(levelDefinitions[1]));
 stateMachine.change(GameStateName.TitleScreen);
 
 const game = new Game(
