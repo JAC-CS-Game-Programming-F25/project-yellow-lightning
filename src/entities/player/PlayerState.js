@@ -27,6 +27,15 @@ export default class PlayerState extends State {
         this.applyGravity(dt);
         this.updatePosition(dt);
 
+        // Check for coin collection
+        const coinsCollected = this.collisionDetector.checkCoinCollisions(
+            this.player
+        );
+        
+        if (coinsCollected > 0) {
+            this.player.coinsCollected += coinsCollected;
+        }
+
         // Update the current animation
         this.player.currentAnimation.update(dt);
     }

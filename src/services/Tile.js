@@ -32,7 +32,7 @@ export default class Tile {
     static NATURE_3 = 38;
     static NATURE_4 = 17;
     static NATURE_5 = 16;
-    static NATURE_5 = 18;
+    static NATURE_6 = 18;
 
     // Platform blocks
     static PLATFORM_1 = 44;

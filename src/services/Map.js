@@ -23,12 +23,18 @@ export default class Map {
         this.tileSize = mapDefinition.tilewidth;
         this.tilesets = mapDefinition.tilesets;
 
+        // Store original map definition for resetting
+        this.mapDefinition = mapDefinition;
+
         // Generate sprites from the tileset image with spacing
         const sprites = Sprite.generateSpritesFromSpriteSheet(
             tilesetImage,
             this.tileSize,
             this.tileSize
         );
+
+        // Store sprites for resetting
+        this.sprites = sprites;
 
         // Create Layer instances for each layer in the map definition
         this.layers = mapDefinition.layers.map(
@@ -42,6 +48,16 @@ export default class Map {
      * @param {number} dt - The time passed since the last update.
      */
     update(dt) {}
+
+    /**
+     * Resets the map to its original state. For coins
+     */
+    reset() {
+        this.layers = this.mapDefinition.layers.map(
+            (layerData) => new Layer(layerData, this.sprites)
+        );
+        this.foregroundLayer = this.layers[Map.FOREGROUND_LAYER];
+    }
 
     /**
      * Renders the map and all its layers.
@@ -76,7 +92,7 @@ export default class Map {
 
     /**
      * Checks if tile is a phase-through tile.
-     * Player can pass through these tiles (chains and nature decorations).
+     * Player can pass through these tiles (chains, nature decorations, and coins).
      * @param {number} row - The row to check.
      * @param {number} col - The column to check.
      * @returns {boolean} True if tile is a phase-through tile, false otherwise.
@@ -90,11 +106,13 @@ export default class Map {
             tile.id === Tile.CHAIN_3 ||
             tile.id === Tile.CHAIN_4 ||
             tile.id === Tile.CHAIN_5 ||
-            tile.id === 35 ||
-            tile.id === 33 ||
-            tile.id === 38 ||
-            tile.id === 17 ||
-            tile.id === 16
+            tile.id === Tile.NATURE_1 ||
+            tile.id === Tile.NATURE_2 ||
+            tile.id === Tile.NATURE_3 ||
+            tile.id === Tile.NATURE_4 ||
+            tile.id === Tile.NATURE_5 ||
+            tile.id === Tile.NATURE_6 ||
+            tile.id === Tile.COIN
         );
     }
 
@@ -152,6 +170,27 @@ export default class Map {
         const tile = this.foregroundLayer.getTile(col, row);
         if (!tile) return false;
         return tile.id === Tile.DOOR;
+    }
+
+    /**
+     * Checks if tile is a coin (collectible).
+     * @param {number} row - The row to check.
+     * @param {number} col - The column to check.
+     * @returns {boolean} True if tile is a coin, false otherwise.
+     */
+    isCoinTile(row, col) {
+        const tile = this.foregroundLayer.getTile(col, row);
+        if (!tile) return false;
+        return tile.id === Tile.COIN;
+    }
+
+    /**
+     * Removes a tile at the specified position (used for collecting coins).
+     * @param {number} col - The column of the tile.
+     * @param {number} row - The row of the tile.
+     */
+    removeTile(col, row) {
+        this.foregroundLayer.setTile(col, row, null);
     }
 
     /**

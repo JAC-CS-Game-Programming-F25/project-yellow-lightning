@@ -200,7 +200,6 @@ export default class CollisionDetector {
      * Checks if entity hit a platform block from the side.
      * Platforms are safe to land on from above, but deadly from sides.
      * @param {Entity} entity - The entity to check.
-     * @param {number} tileX - Platform tile X coordinate.
      * @param {number} tileY - Platform tile Y coordinate.
      * @param {number} tileSize - Size of tiles.
      * @returns {boolean} True if side collision occurred, false otherwise.
@@ -252,5 +251,37 @@ export default class CollisionDetector {
             }
         }
         return false;
+    }
+
+    /**
+     * Checks if entity is colliding with coin tiles and collects them.
+     * @param {Entity} entity - The entity to check.
+     * @returns {number} Number of coins collected this frame.
+     */
+    checkCoinCollisions(entity) {
+        const tileSize = this.map.tileSize;
+        const tileLeft = Math.floor(entity.position.x / tileSize);
+        const tileRight = Math.floor(
+            (entity.position.x + entity.dimensions.x) / tileSize
+        );
+        const tileTop = Math.floor(entity.position.y / tileSize);
+        const tileBottom = Math.floor(
+            (entity.position.y + entity.dimensions.y) / tileSize
+        );
+
+        let coinsCollected = 0;
+
+        // Check all tiles the player overlaps with
+        for (let y = tileTop; y <= tileBottom; y++) {
+            for (let x = tileLeft; x <= tileRight; x++) {
+                if (this.map.isCoinTile(y, x)) {
+                    // Remove the coin from the map
+                    this.map.removeTile(x, y);
+                    coinsCollected++;
+                }
+            }
+        }
+
+        return coinsCollected;
     }
 }

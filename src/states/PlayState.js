@@ -48,6 +48,9 @@ export default class PlayState extends State {
      * Resets the player's position and flags for a fresh start.
      */
     enter() {
+        // Reset the map to restore all coins and tiles
+        this.map.reset();
+
         // Reset player position to start
         this.player.position.set(
             this.player.initialPosition.x,
@@ -57,6 +60,9 @@ export default class PlayState extends State {
         // Reset win/lose flags
         this.player.hasWon = false;
         this.player.hasDied = false;
+
+        // Reset coin counter
+        this.player.coinsCollected = 0;
 
         // Reset player to falling state
         this.player.stateMachine.change(PlayerStateName.Falling);
