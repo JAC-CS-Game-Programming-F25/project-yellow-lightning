@@ -76,10 +76,10 @@ export default class Map {
 
     /**
      * Checks if tile is a phase-through tile.
-     * Player can pass through these tiles.
+     * Player can pass through these tiles (chains and nature decorations).
      * @param {number} row - The row to check.
      * @param {number} col - The column to check.
-     * @returns {boolean} True if tile is a chain tile, false otherwise.
+     * @returns {boolean} True if tile is a phase-through tile, false otherwise.
      */
     isPhaseThrough(row, col) {
         const tile = this.foregroundLayer.getTile(col, row);
@@ -89,7 +89,12 @@ export default class Map {
             tile.id === Tile.CHAIN_2 ||
             tile.id === Tile.CHAIN_3 ||
             tile.id === Tile.CHAIN_4 ||
-            tile.id === Tile.CHAIN_5
+            tile.id === Tile.CHAIN_5 ||
+            tile.id === 35 ||
+            tile.id === 33 ||
+            tile.id === 38 ||
+            tile.id === 17 ||
+            tile.id === 16
         );
     }
 
@@ -107,7 +112,10 @@ export default class Map {
             tile.id === Tile.PLATFORM_1 ||
             tile.id === Tile.PLATFORM_2 ||
             tile.id === Tile.PLATFORM_3 ||
-            tile.id === Tile.PLATFORM_4
+            tile.id === Tile.PLATFORM_4 ||
+            tile.id === Tile.PLATFORM_5 ||
+            tile.id === Tile.PLATFORM_6 ||
+            tile.id === Tile.PLATFORM_7
         );
     }
 
@@ -126,7 +134,11 @@ export default class Map {
             tile.id === Tile.SPIKE_1 ||
             tile.id === Tile.SPIKE_2 ||
             tile.id === Tile.SPIKE_3 ||
-            tile.id === Tile.POST
+            tile.id === Tile.POST_1 ||
+            tile.id === Tile.POST_2 ||
+            tile.id === Tile.POST_3 ||
+            tile.id === Tile.POST_4 ||
+            tile.id === Tile.POST_5
         );
     }
 
