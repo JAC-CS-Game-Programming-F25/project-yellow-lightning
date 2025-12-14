@@ -25,31 +25,28 @@ export default class PlayerState extends State {
     update(dt) {
         this.applyGravity(dt);
         this.updatePosition(dt);
+
+        // Update the current animation
+        this.player.currentAnimation.update(dt);
     }
 
     /**
      * Renders the player on the canvas.
-     * This method handles the player's orientation and rendering as a rectangle.
+     * This method handles the player's orientation and rendering using sprites.
      *
      * @param {CanvasRenderingContext2D} context - The 2D rendering context of the canvas.
      */
     render(context) {
-        // Call the parent class's render method
         super.render();
-
-        // Save the current canvas state
         context.save();
 
-        // Render the player as a rectangle
-        context.fillStyle = "red"; // Red rectangle for the player
-        context.fillRect(
+        const sprite = this.player.currentAnimation.getCurrentFrame();
+
+        sprite.render(
             Math.floor(this.player.position.x),
-            Math.floor(this.player.position.y),
-            this.player.dimensions.x,
-            this.player.dimensions.y
+            Math.floor(this.player.position.y)
         );
 
-        // Restore the canvas state to what it was before our changes
         context.restore();
     }
 

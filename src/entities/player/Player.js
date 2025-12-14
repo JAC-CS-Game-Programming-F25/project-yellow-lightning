@@ -6,6 +6,13 @@ import PlayerStateName from "../../enums/PlayerStateName.js";
 import PlayerRunningState from "./PlayerRunningState.js";
 import PlayerJumpingState from "./PlayerJumpingState.js";
 import PlayerFallingState from "./PlayerFallingState.js";
+import { images } from "../../globals.js";
+import ImageName from "../../enums/ImageName.js";
+import {
+    loadPlayerSprites,
+    playerSpriteConfig,
+} from "../../../config/SpriteConfig.js";
+import Animation from "../../../lib/Animation.js";
 
 /**
  * Represents the player character in the game.
@@ -31,6 +38,22 @@ export default class Player extends Entity {
         this.map = map;
         this.hasWon = false;
         this.hasDied = false;
+
+        // Load player sprites
+        this.sprites = loadPlayerSprites(
+            images.get(ImageName.Tiles),
+            playerSpriteConfig
+        );
+
+        // Create animations for different player states
+        this.animations = {
+            idle: new Animation(this.sprites.idle, 0.1),
+            run: new Animation(this.sprites.run, 0.1),
+            jump: new Animation(this.sprites.jump, 0.1),
+            fall: new Animation(this.sprites.fall, 0.1),
+        };
+
+        this.currentAnimation = this.animations.idle;
 
         // Initialize state machine for player behavior
         this.stateMachine = new StateMachine();
