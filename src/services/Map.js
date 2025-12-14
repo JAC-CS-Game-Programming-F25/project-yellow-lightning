@@ -41,6 +41,28 @@ export default class Map {
             (layerData) => new Layer(layerData, sprites)
         );
         this.foregroundLayer = this.layers[Map.FOREGROUND_LAYER];
+
+        // Count total coins in this map
+        this.totalCoins = this.countTotalCoins();
+    }
+
+    /**
+     * Counts the total number of coins in the map.
+     * @returns {number} The total number of coins in the map.
+     */
+    countTotalCoins() {
+        let count = 0;
+        const foregroundData =
+            this.mapDefinition.layers[Map.FOREGROUND_LAYER].data;
+
+        for (let i = 0; i < foregroundData.length; i++) {
+            if (foregroundData[i] === Tile.COIN + 1) {
+                // Tile IDs are 1-indexed in Tiled
+                count++;
+            }
+        }
+
+        return count;
     }
 
     /**
@@ -205,5 +227,12 @@ export default class Map {
         const tile = this.foregroundLayer.getTile(col, row);
         if (!tile) return false;
         return tile.id === Tile.BOOSTER;
+    }
+
+    /**
+     * Added back, was causing bugs, will fix
+     */
+    getBlockAt(x, y) {
+        return null;
     }
 }

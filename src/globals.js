@@ -40,10 +40,37 @@ export const sounds = new Sounds();
 export let levelDefinitions = {};
 export let currentLevel = 1;
 
+// High scores - stored as { levelNumber: score }
+export let highScores = {
+    1: 0,
+    2: 0,
+    3: 0,
+};
+
 export function setLevelDefinitions(definitions) {
     levelDefinitions = definitions;
 }
 
 export function setCurrentLevel(level) {
     currentLevel = level;
+}
+
+/**
+ * Updates the high score for a level if the new score is better.
+ * @param {number} levelNumber - The level number.
+ * @param {number} score - The score to compare.
+ */
+export function updateHighScore(levelNumber, score) {
+    if (!highScores[levelNumber] || score > highScores[levelNumber]) {
+        highScores[levelNumber] = score;
+    }
+}
+
+/**
+ * Gets the high score for a specific level.
+ * @param {number} levelNumber - The level number.
+ * @returns {number} The high score for that level.
+ */
+export function getHighScore(levelNumber) {
+    return highScores[levelNumber] || 0;
 }
