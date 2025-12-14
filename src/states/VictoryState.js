@@ -12,6 +12,7 @@ import {
     stateMachine,
     timer,
 } from "../globals.js";
+import SaveManager from "../services/SaveManager.js";
 
 export default class VictoryState extends State {
     /**
@@ -22,6 +23,9 @@ export default class VictoryState extends State {
     }
 
     enter() {
+        // Ensure game progress is cleared when victory screen is shown
+        SaveManager.clearGameProgress();
+        
         // Create the panel for the menu
         const panelWidth = 300;
         const panelHeight = 220;

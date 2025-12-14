@@ -33,12 +33,18 @@ export default class PlayerState extends State {
         }
 
         // Check for coin collection
-        const coinsCollected = this.collisionDetector.checkCoinCollisions(
+        const collectedCoins = this.collisionDetector.checkCoinCollisions(
             this.player
         );
 
-        if (coinsCollected > 0) {
-            this.player.coinsCollected += coinsCollected;
+        if (collectedCoins.length > 0) {
+            this.player.coinsCollected += collectedCoins.length;
+            // Track collected coin positions in PlayState
+            if (this.player.playState) {
+                collectedCoins.forEach((coin) => {
+                    this.player.playState.collectedCoinPositions.push(coin);
+                });
+            }
         }
 
         // Update the current animation
