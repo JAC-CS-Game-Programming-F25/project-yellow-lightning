@@ -284,9 +284,23 @@ export default class PlayState extends State {
      * @param {CanvasRenderingContext2D} context - The rendering context.
      */
     render() {
-        // Clear the canvas with sky blue background
-        context.fillStyle = "#5C94FC";
-        context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        if (currentLevel === 1) {
+            images.render(
+                ImageName.Lev1Background,
+                0,
+                0,
+                CANVAS_WIDTH,
+                CANVAS_HEIGHT
+            );
+        } else if (currentLevel === 2) {
+            images.render(
+                ImageName.Lev2Background,
+                0,
+                0,
+                CANVAS_WIDTH,
+                CANVAS_HEIGHT
+            );
+        }
 
         // Apply camera transform
         this.camera.applyTransform(context);

@@ -8,7 +8,15 @@
         },
         {
             "name": "background",
-            "path": "./assets/images/background.jpg"
+            "path": "./assets/images/TitleBackground.png"
+        },
+        {
+            "name": "lev1Background",
+            "path": "./assets/images/lev1Background.png"
+        },
+        {
+            "name": "lev2Background",
+            "path": "./assets/images/lev2Background.png"
         }
     ],
     "fonts": [
