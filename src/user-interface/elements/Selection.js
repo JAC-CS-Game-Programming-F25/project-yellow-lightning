@@ -1,5 +1,6 @@
 import UserInterfaceElement from "../UserInterfaceElement.js";
-import { context, input } from "../../globals.js";
+import { context, input, sounds } from "../../globals.js";
+import SoundName from "../../enums/SoundName.js";
 import Vector from "../../../lib/Vector.js";
 import Input from "../../../lib/Input.js";
 
@@ -11,7 +12,7 @@ export default class Selection extends UserInterfaceElement {
      * @param {number} y
      * @param {number} width
      * @param {number} height
-     * @param {array} items - Elements are objects that each have a string `text` and function `onSelect` property.
+     * @param {array} items
      */
     constructor(x, y, width, height, items) {
         super(x, y, width, height);
@@ -75,7 +76,7 @@ export default class Selection extends UserInterfaceElement {
     }
 
     navigateUp() {
-        // Add souds later
+        sounds.play(SoundName.Navigate);
 
         if (this.currentSelection === 0) {
             this.currentSelection = this.items.length - 1;
@@ -85,7 +86,7 @@ export default class Selection extends UserInterfaceElement {
     }
 
     navigateDown() {
-        // Add souds later
+        sounds.play(SoundName.Navigate);
 
         if (this.currentSelection === this.items.length - 1) {
             this.currentSelection = 0;
@@ -95,7 +96,7 @@ export default class Selection extends UserInterfaceElement {
     }
 
     select() {
-        // Add souds later
+        sounds.play(SoundName.Select);
         this.items[this.currentSelection].onSelect();
     }
 

@@ -1,9 +1,11 @@
 import State from "../../../lib/State.js";
 import { PlayerConfig } from "../../../config/PlayerConfig.js";
+import SoundName from "../../enums/SoundName.js";
 import Tile from "../../services/Tile.js";
 import CollisionDetector from "../../services/CollisionDetector.js";
 import Player from "./Player.js";
 import PlayerStateName from "../../enums/PlayerStateName.js";
+import { sounds } from "../../globals.js";
 
 /**
  * Base class for all player states.
@@ -38,6 +40,7 @@ export default class PlayerState extends State {
         );
 
         if (collectedCoins.length > 0) {
+            sounds.play(SoundName.Collect);
             this.player.coinsCollected += collectedCoins.length;
             // Track collected coin positions in PlayState
             if (this.player.playState) {

@@ -13,6 +13,7 @@ import {
     skullSpriteConfig,
 } from "../../config/SpriteConfig.js";
 import {
+    sounds,
     images,
     context,
     CANVAS_WIDTH,
@@ -22,6 +23,7 @@ import {
     currentLevel,
     updateHighScore,
 } from "../globals.js";
+import SoundName from "../enums/SoundName.js";
 
 /**
  * Represents the main play state of the game.
@@ -118,14 +120,20 @@ export default class PlayState extends State {
      * Resets the player's position and flags for a fresh start.
      */
     enter() {
+        if (currentLevel === 1) {
+            sounds.play(SoundName.Lev1Cinematic);
+        } else if (currentLevel === 2) {
+            sounds.play(SoundName.Lev2Cinematic);
+        }
+
         // Reload the map for the current level
         const levelToLoad = levelDefinitions[currentLevel];
         this.map = new Map(levelToLoad, images.get(ImageName.Tiles));
         this.player.map = this.map;
 
-        // Then point the collision detector to the ne map
+        // Then point the collision detector to the new map
         const states = this.player.stateMachine.states;
-        for (let stateName in states) {
+        for (const stateName in states) {
             if (states[stateName].collisionDetector) {
                 states[stateName].collisionDetector.map = this.map;
             }
@@ -296,5 +304,13 @@ export default class PlayState extends State {
 
         // Render UI (score panel) without camera transform
         this.scorePanel.render();
+    }
+
+    exit() {
+        if (currentLevel === 1) {
+            sounds.stop(SoundName.Lev1Cinematic);
+        } else if (currentLevel === 2) {
+            sounds.stop(SoundName.Lev2Cinematic);
+        }
     }
 }

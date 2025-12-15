@@ -1,7 +1,9 @@
 import PlayerState from "./PlayerState.js";
 import { PlayerConfig } from "../../../config/PlayerConfig.js";
 import PlayerStateName from "../../enums/PlayerStateName.js";
+import SoundName from "../../enums/SoundName.js";
 import Player from "./Player.js";
+import { sounds } from "../../globals.js";
 
 /**
  * Represents the jumping state of the player.
@@ -22,6 +24,7 @@ export default class PlayerJumpingState extends PlayerState {
      * Applies initial upward velocity for the jump.
      */
     enter() {
+        sounds.play(SoundName.Jump);
         this.player.isOnGround = false;
         this.player.velocity.y = PlayerConfig.jumpPower;
         this.player.currentAnimation = this.player.animations.jump;

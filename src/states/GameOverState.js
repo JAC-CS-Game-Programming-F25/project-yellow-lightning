@@ -5,6 +5,8 @@ import Colour from "../enums/Colour.js";
 import Panel from "../user-interface/elements/Panel.js";
 import Selection from "../user-interface/elements/Selection.js";
 import {
+    currentLevel,
+    sounds,
     CANVAS_HEIGHT,
     CANVAS_WIDTH,
     context,
@@ -13,6 +15,7 @@ import {
     timer,
 } from "../globals.js";
 import SaveManager from "../services/SaveManager.js";
+import SoundName from "../enums/SoundName.js";
 
 export default class GameOverState extends State {
     /**
@@ -23,6 +26,12 @@ export default class GameOverState extends State {
     }
 
     enter() {
+        if (currentLevel === 1) {
+            sounds.play(SoundName.Lev1Cinematic);
+        } else if (currentLevel === 2) {
+            sounds.play(SoundName.Lev2Cinematic);
+        }
+
         SaveManager.clearGameProgress();
 
         // Create the panel for the menu
@@ -62,6 +71,14 @@ export default class GameOverState extends State {
                 },
             ]
         );
+    }
+
+    exit() {
+        if (currentLevel === 1) {
+            sounds.stop(SoundName.Lev1Cinematic);
+        } else if (currentLevel === 2) {
+            sounds.stop(SoundName.Lev2Cinematic);
+        }
     }
 
     update(dt) {

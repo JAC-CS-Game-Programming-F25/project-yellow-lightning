@@ -24,17 +24,18 @@ export default class TitleScreenState extends State {
     }
 
     enter() {
-        // sounds.play(SoundName.Rain);
+        sounds.play(SoundName.MenuMusic);
     }
 
     exit() {
-        // sounds.stop(SoundName.Rain);
+        sounds.stop(SoundName.MenuMusic);
     }
 
     update(dt) {
         timer.update(dt);
 
         if (input.isKeyPressed(Input.KEYS.ENTER)) {
+            sounds.play(SoundName.Select);
             stateMachine.change(GameStateName.Transition, {
                 fromState: this,
                 toStateName: GameStateName.HomeScreen,
