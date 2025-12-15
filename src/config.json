@@ -12,7 +12,21 @@
         }
     ],
     "fonts": [
-        { "name": "Zelda", "path": "./assets/fonts/Zelda.otf", "size": "50px" }
+        {
+            "name": "title",
+            "path": "./assets/fonts/title.ttf",
+            "size": "30px"
+        },
+        {
+            "name": "titleSmall",
+            "path": "./assets/fonts/title.ttf",
+            "size": "25px"
+        },
+        {
+            "name": "text",
+            "path": "./assets/fonts/text.ttf",
+            "size": "20px"
+        }
     ],
     "sounds": [
         {

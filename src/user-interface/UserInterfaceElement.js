@@ -2,7 +2,7 @@ import Vector from "../../lib/Vector.js";
 
 export default class UserInterfaceElement {
     static FONT_SIZE = 16;
-    static FONT_FAMILY = "Zelda";
+    static FONT_FAMILY = "text";
 
     /**
      * The base UI element that all interface elements should extend.

@@ -50,7 +50,7 @@ export default class ScorePanel extends Panel {
         // Render the coin count text
         context.save();
         context.fillStyle = Colour.Black;
-        context.font = `${this.fontSize}px Arial, sans-serif`;
+        context.font = "30px text";
         context.textAlign = "center";
         context.textBaseline = "middle";
 

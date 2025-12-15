@@ -10,12 +10,14 @@ import {
     CANVAS_HEIGHT,
     CANVAS_WIDTH,
     context,
+    fonts,
     images,
     stateMachine,
     timer,
 } from "../globals.js";
 import SaveManager from "../services/SaveManager.js";
 import SoundName from "../enums/SoundName.js";
+import FontName from "../enums/FontName.js";
 
 export default class GameOverState extends State {
     /**
@@ -95,7 +97,7 @@ export default class GameOverState extends State {
 
         // Render "GAME OVER" title
         context.save();
-        context.font = "40px Zelda";
+        context.font = fonts.get(FontName.TitleSmall);
         context.fillStyle = "crimson";
         context.textAlign = "center";
         context.textBaseline = "middle";
