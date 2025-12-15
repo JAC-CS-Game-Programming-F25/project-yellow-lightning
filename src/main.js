@@ -1,11 +1,24 @@
 /**
- * Game Name
+ * CFS DASH
  *
- * Authors
+ * Cody Petrone
  *
- * Brief description
+ * Runner like game with extensive objects.
+ * Goal is ot run to the end without dying
+ * to reach the door to escape!
  *
- * Asset sources
+ * Assets:
+ * https://fonts.google.com/specimen/Press+Start+2P?query=Press+Start+2P
+ * https://fonts.google.com/specimen/VT323?query=VT323
+ * https://freesound.org/people/suntemple/sounds/253178/
+ * https://freesound.org/people/likeclockwork/sounds/168408/
+ * https://freesound.org/people/Xiko__/sounds/711129/
+ * https://freesound.org/people/1bob/sounds/717771/
+ * https://freesound.org/people/gobbe57/sounds/794487/
+ * https://freesound.org/people/pumodi/sounds/150222/
+ * https://freesound.org/people/szegvari/sounds/591010/\
+ * https://free-game-assets.itch.io/free-war-pixel-art-game-backgrounds
+ * https://www.kenney.nl/assets/1-bit-platformer-pack
  */
 
 import GameStateName from "./enums/GameStateName.js";
