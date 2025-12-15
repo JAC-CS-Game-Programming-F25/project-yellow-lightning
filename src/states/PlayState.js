@@ -24,6 +24,7 @@ import {
     updateHighScore,
 } from "../globals.js";
 import SoundName from "../enums/SoundName.js";
+import Particle from "../objects/Particle.js";
 
 /**
  * Represents the main play state of the game.
@@ -71,6 +72,8 @@ export default class PlayState extends State {
 
         // Track collected coin positions for saving
         this.collectedCoinPositions = [];
+
+        this.particles = [];
     }
 
     /**
@@ -277,6 +280,11 @@ export default class PlayState extends State {
                 toStateName: GameStateName.GameOver,
             });
         }
+
+        this.particles = this.particles.filter((particle) => {
+            particle.update(dt);
+            return !particle.isDead();
+        });
     }
 
     /**
@@ -313,6 +321,9 @@ export default class PlayState extends State {
 
         this.player.render(context);
 
+        // Render particles
+        this.particles.forEach((particle) => particle.render(context));
+
         // Reset camera transform
         this.camera.resetTransform(context);
 
@@ -325,6 +336,12 @@ export default class PlayState extends State {
             sounds.stop(SoundName.Lev1Cinematic);
         } else if (currentLevel === 2) {
             sounds.stop(SoundName.Lev2Cinematic);
+        }
+    }
+
+    spawnLandingParticles(x, y) {
+        for (let i = 0; i < 8; i++) {
+            this.particles.push(new Particle(x, y));
         }
     }
 }

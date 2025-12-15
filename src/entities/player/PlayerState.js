@@ -141,7 +141,16 @@ export default class PlayerState extends State {
             return;
         }
 
+        const wasInAir = !this.player.isOnGround;
+
         this.collisionDetector.checkVerticalCollisions(this.player);
+
+        if (wasInAir && this.player.isOnGround && this.player.playState) {
+            this.player.playState.spawnLandingParticles(
+                this.player.position.x + this.player.dimensions.x / 2,
+                this.player.position.y + this.player.dimensions.y
+            );
+        }
 
         //Check for door collision
         if (this.collisionDetector.checkDoorCollision(this.player)) {

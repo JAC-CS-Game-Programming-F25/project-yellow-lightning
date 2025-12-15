@@ -77,7 +77,7 @@ export default class Tile {
 
         if (this.isSpike()) {
             this.hitboxOffsetX = 0;
-            this.hitboxOffsetY = 1;
+            this.hitboxOffsetY = 0;
             this.hitboxWidth = 14;
             this.hitboxHeight = 10;
 
