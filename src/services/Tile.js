@@ -1,4 +1,5 @@
 import Sprite from "../../lib/Sprite.js";
+import Hitbox from "../../lib/Hitbox.js";
 
 /**
  * Represents a single tile in the game world.
@@ -68,15 +69,74 @@ export default class Tile {
     constructor(id, sprites) {
         this.sprites = sprites;
         this.id = id;
+
+        this.hitboxOffsetX = 0;
+        this.hitboxOffsetY = 0;
+        this.hitboxWidth = Tile.SIZE;
+        this.hitboxHeight = Tile.SIZE;
+
+        if (this.isSpike()) {
+            this.hitboxOffsetX = 0;
+            this.hitboxOffsetY = 6;
+            this.hitboxWidth = 14;
+            this.hitboxHeight = 10;
+
+            if (this.id === Tile.SPIKE_2) {
+                this.hitboxOffsetY = 0;
+                this.hitboxHeight = 12;
+            }
+        } else if (this.isPlatform()) {
+            this.hitboxOffsetY = 0;
+            this.hitboxHeight = 8;
+        } else if (this.isCoin()) {
+            this.hitboxOffsetX = 4;
+            this.hitboxOffsetY = 4;
+            this.hitboxWidth = 8;
+            this.hitboxHeight = 8;
+        }
+
+        this.hitbox = new Hitbox(
+            0,
+            0,
+            this.hitboxWidth,
+            this.hitboxHeight,
+        );
+    }
+
+    // Helper methods
+    isSpike() {
+        return (
+            this.id === Tile.SPIKE_1 ||
+            this.id === Tile.SPIKE_2 ||
+            this.id === Tile.SPIKE_3 ||
+            this.id === Tile.POKER
+        );
+    }
+
+    isPlatform() {
+        return (
+            this.id === Tile.PLATFORM_1 ||
+            this.id === Tile.PLATFORM_2 ||
+            this.id === Tile.PLATFORM_3 ||
+            this.id === Tile.PLATFORM_4 ||
+            this.id === Tile.PLATFORM_5 ||
+            this.id === Tile.PLATFORM_6 ||
+            this.id === Tile.PLATFORM_7 ||
+            this.id === Tile.PLATFORM_8
+        );
+    }
+
+    isCoin() {
+        return this.id === Tile.COIN;
     }
 
     /**
-     * Renders the tile at the specified grid coordinates.
-     * @param {number} x - The x-coordinate in the tile grid (not pixels).
-     * @param {number} y - The y-coordinate in the tile grid (not pixels).
+     * Renders the tile at the specified grid coordinates
      */
     render(x, y) {
-        // Multiply by Tile.SIZE to convert grid coordinates to pixel coordinates
-        this.sprites[this.id].render(x * Tile.SIZE, y * Tile.SIZE);
+        const pixelX = x * Tile.SIZE;
+        const pixelY = y * Tile.SIZE;
+
+        this.sprites[this.id].render(pixelX, pixelY);
     }
 }

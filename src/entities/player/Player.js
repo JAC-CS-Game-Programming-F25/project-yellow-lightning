@@ -33,6 +33,12 @@ export default class Player extends Entity {
     constructor(x, y, width, height, map) {
         super(x, y, width, height);
 
+        this.hitboxOffsets.position.x = 4;
+        this.hitboxOffsets.position.y = 4;
+
+        this.hitboxOffsets.dimensions.x = -8;
+        this.hitboxOffsets.dimensions.y = -4;
+
         this.initialPosition = new Vector(x, y);
         this.position = new Vector(x, y);
         this.dimensions = new Vector(width, height);
@@ -49,8 +55,6 @@ export default class Player extends Entity {
             playerSpriteConfig
         );
 
-        // Create animations for different player states
-        // Create animations for different player states
         this.animations = {
             idle: new Animation(this.sprites.idle, 0.1),
             run: new Animation(this.sprites.run, 0.1),
@@ -94,6 +98,7 @@ export default class Player extends Entity {
      */
     update(dt) {
         this.stateMachine.update(dt);
+        super.update(dt);
     }
 
     /**
@@ -109,6 +114,9 @@ export default class Player extends Entity {
      */
     die() {
         this.hasDied = true;
+        this.velocity.x = 0;
+        this.velocity.y = 0;
         this.position.set(this.initialPosition.x, this.initialPosition.y);
+        this.updateHitbox();
     }
 }

@@ -146,6 +146,8 @@ export default class PlayState extends State {
             this.player.initialPosition.y
         );
 
+        this.player.updateHitbox();
+
         // Reset win/lose flags
         this.player.hasWon = false;
         this.player.hasDied = false;
@@ -174,6 +176,8 @@ export default class PlayState extends State {
                 savedProgress.playerX,
                 savedProgress.playerY
             );
+
+            this.player.updateHitbox();
 
             // Restore coins collected count
             this.player.coinsCollected = savedProgress.coinsCollected;

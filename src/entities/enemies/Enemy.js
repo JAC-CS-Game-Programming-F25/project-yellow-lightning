@@ -50,6 +50,7 @@ export default class Enemy extends Entity {
 
     update(dt) {
         this.stateMachine.update(dt);
+        super.update(dt);
     }
 
     render(context) {
