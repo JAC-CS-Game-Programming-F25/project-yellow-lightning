@@ -19,27 +19,32 @@ export default class CollisionDetector {
      */
     checkHorizontalCollisions(entity) {
         const tileSize = this.map.tileSize;
-        const tileLeft = Math.floor(entity.position.x / tileSize);
+        const hitbox = entity.hitbox;
+
+        const tileLeft = Math.floor(hitbox.position.x / tileSize);
         const tileRight = Math.floor(
-            (entity.position.x + entity.dimensions.x) / tileSize
+            (hitbox.position.x + hitbox.dimensions.x) / tileSize
         );
-        const tileTop = Math.floor(entity.position.y / tileSize);
+        const tileTop = Math.floor(hitbox.position.y / tileSize);
         const tileBottom = Math.floor(
-            (entity.position.y + entity.dimensions.y - 1) / tileSize
+            (hitbox.position.y + hitbox.dimensions.y - 1) / tileSize
         );
 
         if (entity.velocity.x > 0) {
             // Moving right
             if (this.isSolidTileInColumn(tileRight, tileTop, tileBottom)) {
-                // Collision on the right side
-                entity.position.x = tileRight * tileSize - entity.dimensions.x;
+                entity.position.x =
+                    tileRight * tileSize -
+                    hitbox.dimensions.x -
+                    entity.hitboxOffsets.position.x;
                 entity.velocity.x = 0;
             }
         } else if (entity.velocity.x < 0) {
             // Moving left
             if (this.isSolidTileInColumn(tileLeft, tileTop, tileBottom)) {
                 // Collision on the left side
-                entity.position.x = (tileLeft + 1) * tileSize;
+                entity.position.x =
+                    (tileLeft + 1) * tileSize - entity.hitboxOffsets.position.x;
                 entity.velocity.x = 0;
             }
         }
@@ -51,13 +56,15 @@ export default class CollisionDetector {
      */
     checkVerticalCollisions(entity) {
         const tileSize = this.map.tileSize;
-        const tileLeft = Math.floor(entity.position.x / tileSize);
+        const hitbox = entity.hitbox;
+
+        const tileLeft = Math.floor(hitbox.position.x / tileSize);
         const tileRight = Math.floor(
-            (entity.position.x + entity.dimensions.x - 1) / tileSize
+            (hitbox.position.x + hitbox.dimensions.x - 1) / tileSize
         );
-        const tileTop = Math.floor(entity.position.y / tileSize);
+        const tileTop = Math.floor(hitbox.position.y / tileSize);
         const tileBottom = Math.floor(
-            (entity.position.y + entity.dimensions.y) / tileSize
+            (hitbox.position.y + hitbox.dimensions.y) / tileSize
         );
 
         entity.isOnGround = false;
@@ -66,9 +73,55 @@ export default class CollisionDetector {
             // Falling or on ground
             if (this.isSolidTileInRow(tileBottom, tileLeft, tileRight)) {
                 // Collision below
-                entity.position.y = tileBottom * tileSize - entity.dimensions.y;
+                entity.position.y =
+                    tileBottom * tileSize -
+                    hitbox.dimensions.y -
+                    entity.hitboxOffsets.position.y;
                 entity.velocity.y = 0;
                 entity.isOnGround = true;
+            } else {
+                // Check platform tiles with actual hitbox collision
+                for (let x = tileLeft; x <= tileRight; x++) {
+                    if (this.map.isPlatformTile(tileBottom, x)) {
+                        const platformTile = this.map.foregroundLayer.getTile(
+                            x,
+                            tileBottom
+                        );
+
+                        if (platformTile) {
+                            const platformHitboxTop =
+                                tileBottom * tileSize +
+                                platformTile.hitboxOffsetY;
+                            const platformHitboxBottom =
+                                platformHitboxTop + platformTile.hitboxHeight;
+                            const platformHitboxLeft =
+                                x * tileSize + platformTile.hitboxOffsetX;
+                            const platformHitboxRight =
+                                platformHitboxLeft + platformTile.hitboxWidth;
+
+                            const hitboxBottom =
+                                hitbox.position.y + hitbox.dimensions.y;
+                            const hitboxLeft = hitbox.position.x;
+                            const hitboxRight =
+                                hitbox.position.x + hitbox.dimensions.x;
+
+                            if (
+                                hitboxBottom >= platformHitboxTop &&
+                                hitboxBottom <= platformHitboxBottom &&
+                                hitboxRight > platformHitboxLeft &&
+                                hitboxLeft < platformHitboxRight
+                            ) {
+                                entity.position.y =
+                                    platformHitboxTop -
+                                    hitbox.dimensions.y -
+                                    entity.hitboxOffsets.position.y;
+                                entity.velocity.y = 0;
+                                entity.isOnGround = true;
+                                break;
+                            }
+                        }
+                    }
+                }
             }
         } else if (entity.velocity.y < 0) {
             // Jumping or moving upwards
@@ -82,7 +135,8 @@ export default class CollisionDetector {
                 this.isSolidTileInRow(tileTop, tileLeft, tileRight)
             ) {
                 // Collision above
-                entity.position.y = (tileTop + 1) * tileSize;
+                entity.position.y =
+                    (tileTop + 1) * tileSize - entity.hitboxOffsets.position.y;
                 entity.velocity.y = 0;
             }
         }
@@ -122,6 +176,9 @@ export default class CollisionDetector {
                 this.map.isSolidTileAt(x, y) &&
                 !this.map.isPhaseThrough(y, x)
             ) {
+                if (this.map.isPlatformTile(y, x)) {
+                    continue;
+                }
                 return true;
             }
         }
@@ -137,16 +194,17 @@ export default class CollisionDetector {
      * @returns {boolean} True if a collision with a block occurred, false otherwise.
      */
     checkBlockCollisionFromBelow(entity, tileY, xStart, xEnd) {
+        const hitbox = entity.hitbox;
+
         for (let x = xStart; x <= xEnd; x++) {
             const block = this.map.getBlockAt(
                 x * this.map.tileSize,
                 tileY * this.map.tileSize
             );
             if (block && !block.isHit) {
-                // Check if the entity's top is close to the block's bottom
-                const entityTop = entity.position.y;
+                const hitboxTop = hitbox.position.y;
                 const blockBottom = (tileY + 1) * this.map.tileSize;
-                if (Math.abs(entityTop - blockBottom) < 5) {
+                if (Math.abs(hitboxTop - blockBottom) < 5) {
                     // 5 pixels threshold
                     block.hit();
                     return true;
@@ -164,35 +222,57 @@ export default class CollisionDetector {
      */
     checkDeadlyCollisions(entity) {
         const tileSize = this.map.tileSize;
-        const tileLeft = Math.floor(entity.position.x / tileSize);
+        const hitbox = entity.hitbox;
+
+        const tileLeft = Math.floor(hitbox.position.x / tileSize);
         const tileRight = Math.floor(
-            (entity.position.x + entity.dimensions.x) / tileSize
+            (hitbox.position.x + hitbox.dimensions.x) / tileSize
         );
-        const tileTop = Math.floor(entity.position.y / tileSize);
+        const tileTop = Math.floor(hitbox.position.y / tileSize);
         const tileBottom = Math.floor(
-            (entity.position.y + entity.dimensions.y) / tileSize
+            (hitbox.position.y + hitbox.dimensions.y) / tileSize
         );
 
-        // Check all tiles the player overlaps with
         for (let y = tileTop; y <= tileBottom; y++) {
             for (let x = tileLeft; x <= tileRight; x++) {
                 const tile = this.map.foregroundLayer.getTile(x, y);
 
                 if (tile) {
-                    // Check for deadly tiles
                     if (this.map.isDeadlyTile(y, x)) {
-                        return true;
+                        const tileHitbox = {
+                            x: x * tileSize + tile.hitboxOffsetX,
+                            y: y * tileSize + tile.hitboxOffsetY,
+                            width: tile.hitboxWidth,
+                            height: tile.hitboxHeight,
+                        };
+
+                        const overlaps = !(
+                            hitbox.position.x + hitbox.dimensions.x <
+                                tileHitbox.x ||
+                            hitbox.position.x >=
+                                tileHitbox.x + tileHitbox.width ||
+                            hitbox.position.y + hitbox.dimensions.y <
+                                tileHitbox.y ||
+                            hitbox.position.y >=
+                                tileHitbox.y + tileHitbox.height
+                        );
+
+                        if (overlaps) {
+                            return true;
+                        }
                     }
 
-                    // Check for platform side collisions
                     if (this.map.isPlatformTile(y, x)) {
-                        if (this.isPlatformSideCollision(entity, y, tileSize)) {
+                        if (
+                            this.isPlatformSideCollision(entity, y, x, tileSize)
+                        ) {
                             return true;
                         }
                     }
                 }
             }
         }
+
         return false;
     }
 
@@ -201,22 +281,26 @@ export default class CollisionDetector {
      * Platforms are safe to land on from above, but deadly from sides.
      * @param {Entity} entity - The entity to check.
      * @param {number} tileY - Platform tile Y coordinate.
+     * @param {number} tileX - Platform tile X coordinate.
      * @param {number} tileSize - Size of tiles.
      * @returns {boolean} True if side collision occurred, false otherwise.
      */
-    isPlatformSideCollision(entity, tileY, tileSize) {
-        const platformTop = tileY * tileSize;
-        const platformBottom = (tileY + 1) * tileSize;
+    isPlatformSideCollision(entity, tileY, tileX, tileSize) {
+        const hitbox = entity.hitbox;
+        const platformTile = this.map.foregroundLayer.getTile(tileX, tileY);
 
-        const entityTop = entity.position.y;
-        const entityBottom = entity.position.y + entity.dimensions.y;
+        if (platformTile && entity.velocity.x !== 0) {
+            const platformHitboxTop =
+                tileY * tileSize + platformTile.hitboxOffsetY;
+            const platformHitboxBottom =
+                platformHitboxTop + platformTile.hitboxHeight;
 
-        // If player is moving horizontally into the platform
-        if (entity.velocity.x !== 0) {
-            // Check if entity's vertical position overlaps with platform sides
+            const hitboxTop = hitbox.position.y;
+            const hitboxBottom = hitbox.position.y + hitbox.dimensions.y;
+
             const verticalOverlap =
-                entityBottom > platformTop + 2 &&
-                entityTop < platformBottom - 2;
+                hitboxBottom > platformHitboxTop + 2 &&
+                hitboxTop < platformHitboxBottom - 2;
 
             if (verticalOverlap) {
                 return true;
@@ -233,16 +317,18 @@ export default class CollisionDetector {
      */
     checkDoorCollision(entity) {
         const tileSize = this.map.tileSize;
-        const tileLeft = Math.floor(entity.position.x / tileSize);
+        const hitbox = entity.hitbox;
+
+        const tileLeft = Math.floor(hitbox.position.x / tileSize);
         const tileRight = Math.floor(
-            (entity.position.x + entity.dimensions.x) / tileSize
+            (hitbox.position.x + hitbox.dimensions.x) / tileSize
         );
-        const tileTop = Math.floor(entity.position.y / tileSize);
+        const tileTop = Math.floor(hitbox.position.y / tileSize);
         const tileBottom = Math.floor(
-            (entity.position.y + entity.dimensions.y) / tileSize
+            (hitbox.position.y + hitbox.dimensions.y) / tileSize
         );
 
-        // Check all tiles the player overlaps with
+        // Check all tiles the player's hitbox overlaps with
         for (let y = tileTop; y <= tileBottom; y++) {
             for (let x = tileLeft; x <= tileRight; x++) {
                 if (this.map.isDoorTile(y, x)) {
@@ -256,29 +342,55 @@ export default class CollisionDetector {
     /**
      * Checks if entity is colliding with coin tiles and returns their positions.
      * @param {Entity} entity - The entity to check.
-     * @returns {Array} Array of {x, y, count} with coin positions collected
+     * @returns {Array} Array of {x, y} with coin positions collected
      */
     checkCoinCollisions(entity) {
         const tileSize = this.map.tileSize;
-        const tileLeft = Math.floor(entity.position.x / tileSize);
+        const hitbox = entity.hitbox;
+
+        const tileLeft = Math.floor(hitbox.position.x / tileSize);
         const tileRight = Math.floor(
-            (entity.position.x + entity.dimensions.x) / tileSize
+            (hitbox.position.x + hitbox.dimensions.x) / tileSize
         );
-        const tileTop = Math.floor(entity.position.y / tileSize);
+        const tileTop = Math.floor(hitbox.position.y / tileSize);
         const tileBottom = Math.floor(
-            (entity.position.y + entity.dimensions.y) / tileSize
+            (hitbox.position.y + hitbox.dimensions.y) / tileSize
         );
 
         const collectedCoins = [];
 
-        // Check all tiles the player overlaps with
+        // Check all tiles the player's hitbox overlaps with
         for (let y = tileTop; y <= tileBottom; y++) {
             for (let x = tileLeft; x <= tileRight; x++) {
                 if (this.map.isCoinTile(y, x)) {
-                    // Remove the coin from the map
-                    this.map.removeTile(x, y);
-                    // Return the position
-                    collectedCoins.push({ x: x, y: y });
+                    const tile = this.map.foregroundLayer.getTile(x, y);
+
+                    if (tile) {
+                        // Get coin's hitbox position
+                        const coinHitbox = {
+                            x: x * tileSize + tile.hitboxOffsetX,
+                            y: y * tileSize + tile.hitboxOffsetY,
+                            width: tile.hitboxWidth,
+                            height: tile.hitboxHeight,
+                        };
+
+                        // Check if entity hitbox overlaps with coin hitbox
+                        const overlaps = !(
+                            hitbox.position.x + hitbox.dimensions.x <=
+                                coinHitbox.x ||
+                            hitbox.position.x >=
+                                coinHitbox.x + coinHitbox.width ||
+                            hitbox.position.y + hitbox.dimensions.y <=
+                                coinHitbox.y ||
+                            hitbox.position.y >=
+                                coinHitbox.y + coinHitbox.height
+                        );
+
+                        if (overlaps) {
+                            this.map.removeTile(x, y);
+                            collectedCoins.push({ x: x, y: y });
+                        }
+                    }
                 }
             }
         }
@@ -293,16 +405,18 @@ export default class CollisionDetector {
      */
     checkBoosterCollisions(entity) {
         const tileSize = this.map.tileSize;
-        const tileLeft = Math.floor(entity.position.x / tileSize);
+        const hitbox = entity.hitbox;
+
+        const tileLeft = Math.floor(hitbox.position.x / tileSize);
         const tileRight = Math.floor(
-            (entity.position.x + entity.dimensions.x) / tileSize
+            (hitbox.position.x + hitbox.dimensions.x) / tileSize
         );
-        const tileTop = Math.floor(entity.position.y / tileSize);
+        const tileTop = Math.floor(hitbox.position.y / tileSize);
         const tileBottom = Math.floor(
-            (entity.position.y + entity.dimensions.y) / tileSize
+            (hitbox.position.y + hitbox.dimensions.y) / tileSize
         );
 
-        // Check all tiles the player overlaps with
+        // Check all tiles the player's hitbox overlaps with
         for (let y = tileTop; y <= tileBottom; y++) {
             for (let x = tileLeft; x <= tileRight; x++) {
                 if (this.map.isBoosterTile(y, x)) {

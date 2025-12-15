@@ -1,4 +1,5 @@
 import { getCollisionDirection, isAABBCollision } from "../../lib/Collision.js";
+import Hitbox from "../../lib/Hitbox.js";
 import Vector from "../../lib/Vector.js";
 
 /**
@@ -16,13 +17,36 @@ export default class Entity {
         this.dimensions = new Vector(width, height);
         this.velocity = new Vector(0, 0);
         this.isOnGround = false;
+
+        this.hitboxOffsets = new Hitbox(0, 0, 0, 0);
+
+        this.hitbox = new Hitbox(
+            this.position.x + this.hitboxOffsets.position.x,
+            this.position.y + this.hitboxOffsets.position.y,
+            this.dimensions.x + this.hitboxOffsets.dimensions.x,
+            this.dimensions.y + this.hitboxOffsets.dimensions.y
+        );
     }
 
     /**
      * Updates the entity state.
      * @param {number} dt - Delta time.
      */
-    update(dt) {}
+    update(dt) {
+        this.updateHitbox();
+    }
+
+    /**
+     * Updates the hitbox position based on entity position and offsets.
+     */
+    updateHitbox() {
+        this.hitbox.set(
+            this.position.x + this.hitboxOffsets.position.x,
+            this.position.y + this.hitboxOffsets.position.y,
+            this.dimensions.x + this.hitboxOffsets.dimensions.x,
+            this.dimensions.y + this.hitboxOffsets.dimensions.y
+        );
+    }
 
     /**
      * Renders the entity.

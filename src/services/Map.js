@@ -156,7 +156,8 @@ export default class Map {
             tile.id === Tile.PLATFORM_4 ||
             tile.id === Tile.PLATFORM_5 ||
             tile.id === Tile.PLATFORM_6 ||
-            tile.id === Tile.PLATFORM_7
+            tile.id === Tile.PLATFORM_7 ||
+            tile.id === Tile.PLATFORM_8
         );
     }
 
