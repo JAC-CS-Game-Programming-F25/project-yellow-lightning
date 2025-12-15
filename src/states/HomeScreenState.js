@@ -18,10 +18,11 @@ import {
 
 export default class HomeScreenState extends State {
     /**
-     * Home/Menu screen with level selection
+     * Home/Menu screen with level selection and instructions
      */
     constructor() {
         super();
+        this.showingInstructions = false;
     }
 
     enter() {
@@ -38,43 +39,78 @@ export default class HomeScreenState extends State {
             panelColour: Colour.White,
         });
 
-        // Create the selection menu with level options
+        this.createSelection();
+    }
+
+    createSelection() {
+        const panelWidth = 250;
+        const panelHeight = 250;
+        const panelX = (CANVAS_WIDTH - panelWidth) / 2;
+        const panelY = (CANVAS_HEIGHT - panelHeight) / 2;
+
         const selectionX = panelX + 20;
         const selectionY = panelY + 20;
         const selectionWidth = panelWidth - 40;
         const selectionHeight = panelHeight - 40;
 
-        // Get high scores for display
-        const score1 = getHighScore(1);
-        const score2 = getHighScore(2);
-        const score3 = getHighScore(3);
+        if (this.showingInstructions) {
+            // Show instructions view
+            this.selection = new Selection(
+                selectionX,
+                selectionY,
+                selectionWidth,
+                selectionHeight,
+                [
+                    {
+                        text: `Press 'W' to jump`,
+                        onSelect: () => {},
+                    },
+                    {
+                        text: `Lock in chat!`,
+                        onSelect: () => {},
+                    },
+                    {
+                        text: `Back`,
+                        onSelect: () => {
+                            this.showingInstructions = false;
+                            this.createSelection();
+                        },
+                    },
+                ]
+            );
+        } else {
+            // Show level selection view
+            const score1 = getHighScore(1);
+            const score2 = getHighScore(2);
 
-        this.selection = new Selection(
-            selectionX,
-            selectionY,
-            selectionWidth,
-            selectionHeight,
-            [
-                {
-                    text: `Level 1 - Best ${score1}/3`,
-                    onSelect: () => {
-                        this.startLevel(1);
+            this.selection = new Selection(
+                selectionX,
+                selectionY,
+                selectionWidth,
+                selectionHeight,
+                [
+                    {
+                        text: `Level 1 - Best ${score1}/3`,
+                        onSelect: () => {
+                            this.startLevel(1);
+                        },
                     },
-                },
-                {
-                    text: `Level 2 - Best ${score2}/3`,
-                    onSelect: () => {
-                        this.startLevel(2);
+                    {
+                        text: `Level 2 - Best ${score2}/3`,
+                        onSelect: () => {
+                            this.startLevel(2);
+                        },
                     },
-                },
-                {
-                    text: `Level 3 - Best ${score3}/3`,
-                    onSelect: () => {
-                        this.startLevel(3);
+                    {
+                        text: `Instructions`,
+                        onSelect: () => {
+                            this.showingInstructions = true;
+                            this.createSelection();
+                        },
                     },
-                },
-            ]
-        );
+                ]
+            );
+        }
     }
 
     exit() {
