@@ -1,7 +1,8 @@
 import PlayerState from "./PlayerState.js";
 import Player from "./Player.js";
 import GameStateName from "../../enums/GameStateName.js";
-import { stateMachine } from "../../globals.js";
+import SoundName from "../../enums/SoundName.js";
+import { stateMachine, sounds } from "../../globals.js";
 
 /**
  * Represents the victory state of the player.
@@ -22,6 +23,7 @@ export default class PlayerVictoryState extends PlayerState {
      * Called when entering the victory state.
      */
     enter() {
+        sounds.play(SoundName.Victory);
         this.player.velocity.x = 0;
         this.player.velocity.y = 0;
         this.animationComplete = false;

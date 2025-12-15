@@ -1,6 +1,7 @@
 import State from "../../lib/State.js";
 import GameStateName from "../enums/GameStateName.js";
 import ImageName from "../enums/ImageName.js";
+import SoundName from "../enums/SoundName.js";
 import Colour from "../enums/Colour.js";
 import Panel from "../user-interface/elements/Panel.js";
 import Selection from "../user-interface/elements/Selection.js";
@@ -8,6 +9,7 @@ import {
     CANVAS_HEIGHT,
     CANVAS_WIDTH,
     images,
+    sounds,
     stateMachine,
     timer,
     setCurrentLevel,
@@ -23,6 +25,8 @@ export default class HomeScreenState extends State {
     }
 
     enter() {
+        sounds.play(SoundName.MenuMusic);
+
         // Create the panel for the menu
         const panelWidth = 250;
         const panelHeight = 250;
@@ -71,6 +75,10 @@ export default class HomeScreenState extends State {
                 },
             ]
         );
+    }
+
+    exit() {
+        sounds.stop(SoundName.MenuMusic);
     }
 
     update(dt) {

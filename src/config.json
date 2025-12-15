@@ -8,11 +8,97 @@
         },
         {
             "name": "background",
-            "path": "./assets/images/background.jpg"
+            "path": "./assets/images/TitleBackground.png"
+        },
+        {
+            "name": "lev1Background",
+            "path": "./assets/images/lev1Background.png"
+        },
+        {
+            "name": "lev2Background",
+            "path": "./assets/images/lev2Background.png"
         }
     ],
     "fonts": [
-        { "name": "Zelda", "path": "./assets/fonts/Zelda.otf", "size": "50px" }
+        {
+            "name": "title",
+            "path": "./assets/fonts/title.ttf",
+            "size": "30px"
+        },
+        {
+            "name": "titleSmall",
+            "path": "./assets/fonts/title.ttf",
+            "size": "25px"
+        },
+        {
+            "name": "text",
+            "path": "./assets/fonts/text.ttf",
+            "size": "20px"
+        }
     ],
-    "sounds": []
+    "sounds": [
+        {
+            "name": "collect",
+            "path": "./assets/sounds/collect.wav",
+            "size": 3,
+            "volume": 0.5,
+            "loop": false
+        },
+        {
+            "name": "death",
+            "path": "./assets/sounds/death.wav",
+            "size": 1,
+            "volume": 0.6,
+            "loop": false
+        },
+        {
+            "name": "jump",
+            "path": "./assets/sounds/jump.wav",
+            "size": 2,
+            "volume": 0.4,
+            "loop": false
+        },
+        {
+            "name": "lev1Cinematic",
+            "path": "./assets/sounds/lev1Cinematic.wav",
+            "size": 1,
+            "volume": 0.3,
+            "loop": true
+        },
+        {
+            "name": "lev2Cinematic",
+            "path": "./assets/sounds/lev2Cinematic.wav",
+            "size": 1,
+            "volume": 0.3,
+            "loop": true
+        },
+        {
+            "name": "menumusic",
+            "path": "./assets/sounds/menumusic.wav",
+            "size": 1,
+            "volume": 0.3,
+            "loop": true
+        },
+        {
+            "name": "navigate",
+            "path": "./assets/sounds/navigate.wav",
+            "size": 2,
+            "volume": 0.5,
+            "loop": false
+        },
+        {
+            "name": "select",
+            "path": "./assets/sounds/select.mp3",
+            "size": 1,
+            "volume": 0.6,
+            "loop": false
+        },
+        {
+            "name": "victory",
+            "path": "./assets/sounds/victory.wav",
+            "size": 1,
+            "volume": 0.5,
+            "loop": false
+        }
+    ]
 }

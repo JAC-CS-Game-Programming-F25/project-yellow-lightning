@@ -7,12 +7,14 @@ import {
     CANVAS_HEIGHT,
     CANVAS_WIDTH,
     context,
+    fonts,
     images,
     input,
     sounds,
     stateMachine,
     timer,
 } from "../globals.js";
+import FontName from "../enums/FontName.js";
 
 export default class TitleScreenState extends State {
     /**
@@ -24,17 +26,18 @@ export default class TitleScreenState extends State {
     }
 
     enter() {
-        // sounds.play(SoundName.Rain);
+        sounds.play(SoundName.MenuMusic);
     }
 
     exit() {
-        // sounds.stop(SoundName.Rain);
+        sounds.stop(SoundName.MenuMusic);
     }
 
     update(dt) {
         timer.update(dt);
 
         if (input.isKeyPressed(Input.KEYS.ENTER)) {
+            sounds.play(SoundName.Select);
             stateMachine.change(GameStateName.Transition, {
                 fromState: this,
                 toStateName: GameStateName.HomeScreen,
@@ -44,12 +47,14 @@ export default class TitleScreenState extends State {
 
     render() {
         images.render(ImageName.Background, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-        context.font = "60px Zelda";
+
+        context.font = fonts.get(FontName.Title);
         context.fillStyle = "white";
         context.textBaseline = "middle";
         context.textAlign = "center";
         context.fillText("CFS DASH", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
-        context.font = "30px Zelda";
+
+        context.font = fonts.get(FontName.Text);
         context.fillText(
             "press enter to begin",
             CANVAS_WIDTH / 2,

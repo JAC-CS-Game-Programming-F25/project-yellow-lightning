@@ -8,11 +8,13 @@ import {
     CANVAS_HEIGHT,
     CANVAS_WIDTH,
     context,
+    fonts,
     images,
     stateMachine,
     timer,
 } from "../globals.js";
 import SaveManager from "../services/SaveManager.js";
+import FontName from "../enums/FontName.js";
 
 export default class VictoryState extends State {
     /**
@@ -25,7 +27,7 @@ export default class VictoryState extends State {
     enter() {
         // Ensure game progress is cleared when victory screen is shown
         SaveManager.clearGameProgress();
-        
+
         // Create the panel for the menu
         const panelWidth = 300;
         const panelHeight = 220;
@@ -79,7 +81,7 @@ export default class VictoryState extends State {
 
         // Render "VICTORY" title
         context.save();
-        context.font = "40px Zelda";
+        context.font = fonts.get(FontName.TitleSmall);
         context.fillStyle = "gold";
         context.textAlign = "center";
         context.textBaseline = "middle";

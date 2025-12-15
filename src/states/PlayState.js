@@ -13,6 +13,7 @@ import {
     skullSpriteConfig,
 } from "../../config/SpriteConfig.js";
 import {
+    sounds,
     images,
     context,
     CANVAS_WIDTH,
@@ -22,6 +23,8 @@ import {
     currentLevel,
     updateHighScore,
 } from "../globals.js";
+import SoundName from "../enums/SoundName.js";
+import Particle from "../objects/Particle.js";
 
 /**
  * Represents the main play state of the game.
@@ -69,6 +72,8 @@ export default class PlayState extends State {
 
         // Track collected coin positions for saving
         this.collectedCoinPositions = [];
+
+        this.particles = [];
     }
 
     /**
@@ -118,14 +123,20 @@ export default class PlayState extends State {
      * Resets the player's position and flags for a fresh start.
      */
     enter() {
+        if (currentLevel === 1) {
+            sounds.play(SoundName.Lev1Cinematic);
+        } else if (currentLevel === 2) {
+            sounds.play(SoundName.Lev2Cinematic);
+        }
+
         // Reload the map for the current level
         const levelToLoad = levelDefinitions[currentLevel];
         this.map = new Map(levelToLoad, images.get(ImageName.Tiles));
         this.player.map = this.map;
 
-        // Then point the collision detector to the ne map
+        // Then point the collision detector to the new map
         const states = this.player.stateMachine.states;
-        for (let stateName in states) {
+        for (const stateName in states) {
             if (states[stateName].collisionDetector) {
                 states[stateName].collisionDetector.map = this.map;
             }
@@ -269,6 +280,11 @@ export default class PlayState extends State {
                 toStateName: GameStateName.GameOver,
             });
         }
+
+        this.particles = this.particles.filter((particle) => {
+            particle.update(dt);
+            return !particle.isDead();
+        });
     }
 
     /**
@@ -276,9 +292,23 @@ export default class PlayState extends State {
      * @param {CanvasRenderingContext2D} context - The rendering context.
      */
     render() {
-        // Clear the canvas with sky blue background
-        context.fillStyle = "#5C94FC";
-        context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        if (currentLevel === 1) {
+            images.render(
+                ImageName.Lev1Background,
+                0,
+                0,
+                CANVAS_WIDTH,
+                CANVAS_HEIGHT
+            );
+        } else if (currentLevel === 2) {
+            images.render(
+                ImageName.Lev2Background,
+                0,
+                0,
+                CANVAS_WIDTH,
+                CANVAS_HEIGHT
+            );
+        }
 
         // Apply camera transform
         this.camera.applyTransform(context);
@@ -291,10 +321,27 @@ export default class PlayState extends State {
 
         this.player.render(context);
 
+        // Render particles
+        this.particles.forEach((particle) => particle.render(context));
+
         // Reset camera transform
         this.camera.resetTransform(context);
 
         // Render UI (score panel) without camera transform
         this.scorePanel.render();
+    }
+
+    exit() {
+        if (currentLevel === 1) {
+            sounds.stop(SoundName.Lev1Cinematic);
+        } else if (currentLevel === 2) {
+            sounds.stop(SoundName.Lev2Cinematic);
+        }
+    }
+
+    spawnLandingParticles(x, y) {
+        for (let i = 0; i < 8; i++) {
+            this.particles.push(new Particle(x, y));
+        }
     }
 }
